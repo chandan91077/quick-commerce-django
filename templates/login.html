@@ -1,0 +1,88 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Login</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}" />
+  </head>
+  <body class="auth-page">
+    <main class="auth-shell">
+      <section class="auth-card" aria-labelledby="login-title">
+        <header class="auth-header">
+          <p class="auth-kicker">Welcome back</p>
+          <h1 id="login-title" class="auth-title">Login to your account</h1>
+          <p class="auth-subtitle">Continue where you left off</p>
+        </header>
+
+        {% if messages %}
+        <div class="messages">
+          {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <form class="auth-form" method="post" action="">
+          {% csrf_token %}
+          <label class="field">
+            <span class="field-label">Username</span>
+            <input
+              class="field-input"
+              type="text"
+              name="username"
+              placeholder="Enter your username"
+              autocomplete="username"
+              required
+            />
+          </label>
+
+          <label class="field">
+            <span class="field-label">Password</span>
+            <input
+              class="field-input"
+              type="password"
+              name="password"
+              placeholder="Enter your password"
+              autocomplete="current-password"
+              required
+            />
+          </label>
+
+          <div class="auth-row">
+            <label class="checkbox">
+              <input type="checkbox" name="remember" />
+              <span>Remember me</span>
+            </label>
+            <a class="link" href="#">Forgot password?</a>
+          </div>
+
+          <button class="button primary" type="submit">Login</button>
+        </form>
+
+        <footer class="auth-footer">
+          <span>New here?</span>
+          <a class="link" href="{% url 'register' %}">Create an account</a>
+        </footer>
+      </section>
+
+      <aside class="auth-panel" aria-hidden="true">
+        <div class="panel-content">
+          <h2>Secure, fast, and simple.</h2>
+          <p>Manage your work AND keep everything in one place.</p>
+          <div class="panel-metrics">
+            <div>
+              <span class="metric">24/7</span>
+              <span class="metric-label">Support</span>
+            </div>
+            <div>
+              <span class="metric">100%</span>
+              <span class="metric-label">Uptime</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </main>
+  </body>
+</html>

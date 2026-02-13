@@ -1,0 +1,177 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Blinkit Clone</title>
+
+    <link rel="stylesheet" href="{% static 'home.css' %}?v=1.1">
+</head>
+
+<body>
+
+    <!-- HEADER CALL -->
+    {% include 'header.html' %}
+
+    <!-- MAIN CONTAINER -->
+    <div class="container">
+
+        <!-- TOP BANNER -->
+        <div class="banner" style="background-image: url('{% static 'images/Frame-1437256605-2-2.jpg' %}');">
+            <div class="banner-text">
+                <h1>Stock up on daily essentials</h1>
+                <p>
+                    Get farm-fresh goodness & a range of exotic <br>
+                    fruits, vegetables, eggs & more
+                </p>
+                <button>Shop Now</button>
+            </div>
+        </div>
+
+        <!-- SMALL CARDS -->
+        <div class="small-cards">
+
+            <!-- CARD 1 -->
+            <div class="card pharmacy">
+                <div>
+                    <h3>Pharmacy at your doorstep!</h3>
+                    <p>Cough syrups, pain relief sprays & more</p>
+                    <button>Order Now</button>
+                </div>
+                <img src="{% static 'images/pharmacy-WEB.jpg' %}">
+            </div>
+
+            <!-- CARD 2 -->
+            <div class="card pet">
+                <div>
+                    <h3>Pet care supplies at your door</h3>
+                    <p>Food, treats, toys & more</p>
+                    <button>Order Now</button>
+                </div>
+                <img src="{% static 'images/pet_crystal_WEB-1.jpg' %}">
+            </div>
+
+            <!-- CARD 3 -->
+            <div class="card baby">
+                <div>
+                    <h3>No time for a diaper run?</h3>
+                    <p>Get baby care essentials</p>
+                    <button>Order Now</button>
+                </div>
+                <img src="{% static 'images/baby_crystal_WEB-1.jpg' %}">
+            </div>
+
+        </div>
+
+        <!-- CATEGORY GRID -->
+        <div class="categories">
+
+            <!-- ITEM -->
+            <div class="cat">
+                <img src="{% static 'images/paan-corner_web.png' %}">
+                <p>Paan Corner</p>
+            </div>
+
+            <div class="cat">
+                <img src="{% static 'images/Dairy,Bread&Eggs.png' %}">
+                <p>Dairy, Bread & Eggs</p>
+            </div>
+
+            <div class="cat">
+                <img src="{% static 'images/Fruits&Vegetables.png' %}">
+                <p>Fruits & Vegetables</p>
+            </div>
+
+            <div class="cat">
+                <img src="{% static 'images/ColdDrinks&Juices.png' %}">
+                <p>Cold Drinks & Juices</p>
+            </div>
+
+            <div class="cat">
+                <img src="{% static 'images/Snacks&Munchies.png' %}">
+                <p>Snacks & Munchies</p>
+            </div>
+
+            <div class="cat">
+                <img src="{% static 'images/Breakfast&InstantFood.png' %}">
+                <p>Breakfast & Instant Food</p>
+            </div>
+
+            <div class="cat">
+                <img src="{% static 'images/SweetTooth.png' %}">
+                <p>Sweet Tooth</p>
+            </div>
+
+            <div class="cat">
+                <img src="{% static 'images/Bakery&Biscuits.png' %}">
+                <p>Bakery & Biscuits</p>
+            </div>
+
+            <div class="cat">
+                <img src="{% static 'images/Tea,Coffee&MilkDrinks.png' %}">
+                <p>Tea, Coffee & Milk</p>
+            </div>
+
+            <div class="cat">
+                <img src="{% static 'images/Atta,Rice&Dal.png' %}">
+                <p>Atta, Rice & Dal</p>
+            </div>
+
+            <div class="cat">
+                <img src="{% static 'images/Masala,Oil&More.png' %}">
+                <p>Masala & Oil</p>
+            </div>
+
+            <div class="cat">
+                <img src="{% static 'images/Sauces&Spreads.png' %}">
+                <p>Sauces & Spreads</p>
+            </div>
+
+            <div class="cat">
+                <img src="{% static 'images/Chicken,Meat&Fish.png' %}">
+                <p>Chicken, Meat & Fish</p>
+            </div>
+
+            <div class="cat">
+                <img src="{% static 'images/Organic&HealthyLiving.png' %}">
+                <p>Organic Living</p>
+            </div>
+
+            <div class="cat">
+                <img src="{% static 'images/BabyCare.png' %}">
+                <p>Baby Care</p>
+            </div>
+
+            <div class="cat">
+                <img src="{% static 'images/Pharma&Wellness.png' %}">
+                <p>Pharma & Wellness</p>
+            </div>
+
+            <div class="cat">
+                <img src="{% static 'images/CleaningEssentials.png' %}">
+                <p>Cleaning Essentials</p>
+            </div>
+
+            <div class="cat">
+                <img src="{% static 'images/Home&Office.png' %}">
+                <p>Home & Office</p>
+            </div>
+
+            <div class="cat">
+                <img src="{% static 'images/PersonalCare.png' %}">
+                <p>Personal Care</p>
+            </div>
+
+            <div class="cat">
+                <img src="{% static 'images/PetCare.png' %}">
+                <p>Pet Care</p>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

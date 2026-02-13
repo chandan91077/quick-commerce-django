@@ -1,0 +1,70 @@
+{% load static %}
+
+<!-- HEADER -->
+<header class="header">
+
+    <!-- LEFT : LOGO -->
+    <div class="header-left">
+        <h1 class="logo">blink<span>it</span></h1>
+    </div>
+
+    <!-- LOCATION + DELIVERY -->
+    <div class="header-location">
+        <div class="delivery-text">Delivery in 8 minutes</div>
+
+        <div class="location-bar">
+            <span class="location-icon">📍</span>
+
+            <select class="location-select">
+                <option>B62, Pocket B, South City I, Sector 41</option>
+                <option>Gurgaon, Haryana</option>
+                <option>Delhi, India</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- SEARCH BAR -->
+    <div class="header-search">
+        <input type="text" placeholder='Search "milk"'>
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="header-right">
+
+        {% if user.is_authenticated %}
+        <div class="dropdown">
+            <button class="dropbtn">Account ▾</button>
+            <div class="dropdown-content">
+                <div class="dropdown-header">
+                    <h3>My Account</h3>
+                    <p>{{ user.username }}</p>
+                </div>
+                <hr>
+                <a href="#">My Orders</a>
+                <a href="#">Saved Addresses</a>
+                <a href="#">My Prescriptions</a>
+                <a href="#">E-Gift Cards</a>
+                <a href="#">FAQ's</a>
+                <a href="#">Account Privacy</a>
+                <a href="{% url 'logout' %}" class="logout-link">Log Out</a>
+
+                <div class="qr-section">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Example" alt="QR Code">
+                    <div>
+                        <h4>Simple way to get groceries <br> <span class="highlight">at your doorstep</span></h4>
+                        <p>Scan the QR code and download blinkit app</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <a href="{% url 'login' %}" class="login-btn">Login</a>
+        {% endif %}
+
+        <button class="cart-btn">
+            🛒 My Cart
+        </button>
+
+    </div>
+
+</header>
