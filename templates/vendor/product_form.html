@@ -1,0 +1,117 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ action }} Product - Blinkit Vendor</title>
+    <link rel="stylesheet" href="{% static 'home.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="{% static 'vendor/vendor.css' %}" />
+  </head>
+
+  <body>
+    <div class="vendor-header">
+      <div class="vendor-logo">
+        <h1>blink<span>it</span></h1>
+      </div>
+      <div class="vendor-nav">
+        <a href="{% url 'vendor_dashboard' %}"
+          ><i class="fas fa-chart-line"></i> Dashboard</a
+        >
+        <a href="{% url 'product_list' %}"
+          ><i class="fas fa-box"></i> Products</a
+        >
+        <a href="{% url 'vendor_orders' %}"
+          ><i class="fas fa-shopping-bag"></i> Orders</a
+        >
+        <a href="{% url 'logout_vendor' %}"
+          ><i class="fas fa-sign-out-alt"></i> Logout</a
+        >
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="form-container">
+        <h1 class="page-title">{{ action }} Product</h1>
+
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+
+          <div class="form-row">
+            <div class="form-group" style="grid-column: 1 / -1">
+              <label>Product Name *</label>
+              {{ form.name }}
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Category *</label>
+              {{ form.category }}
+            </div>
+            <div class="form-group">
+              <label>Unit *</label>
+              {{ form.unit }}
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group" style="grid-column: 1 / -1">
+              <label>Description *</label>
+              {{ form.description }}
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Price (₹) *</label>
+              {{ form.price }}
+            </div>
+            <div class="form-group">
+              <label>Discount Price (₹)</label>
+              {{ form.discount_price }}
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Quantity *</label>
+              {{ form.quantity }}
+            </div>
+            <div class="form-group">
+              <label>Weight</label>
+              {{ form.weight }}
+            </div>
+            <div class="form-group">
+              <label>Low Stock Alert</label>
+              {{ form.low_stock_threshold }}
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Product Image</label>
+              {{ form.image }}
+            </div>
+          </div>
+
+          <div class="form-check">
+            {{ form.is_available }}
+            <label>Product is available for sale</label>
+          </div>
+
+          <div style="margin-top: 30px">
+            <button type="submit" class="btn-submit">
+              <i class="fas fa-save"></i> Save Product
+            </button>
+            <a href="{% url 'product_list' %}" class="btn-cancel">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

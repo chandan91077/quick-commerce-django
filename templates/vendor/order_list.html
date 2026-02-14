@@ -1,0 +1,123 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Orders - Blinkit Vendor</title>
+    <link rel="stylesheet" href="{% static 'home.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="{% static 'vendor/vendor.css' %}" />
+  </head>
+
+  <body>
+    <div class="vendor-header">
+      <div class="vendor-logo">
+        <h1>blink<span>it</span></h1>
+      </div>
+      <div class="vendor-nav">
+        <a href="{% url 'vendor_dashboard' %}"
+          ><i class="fas fa-chart-line"></i> Dashboard</a
+        >
+        <a href="{% url 'product_list' %}"
+          ><i class="fas fa-box"></i> Products</a
+        >
+        <a href="{% url 'vendor_orders' %}"
+          ><i class="fas fa-shopping-bag"></i> Orders</a
+        >
+        <a href="{% url 'earnings_report' %}"
+          ><i class="fas fa-rupee-sign"></i> Earnings</a
+        >
+        <a href="{% url 'logout_vendor' %}"
+          ><i class="fas fa-sign-out-alt"></i> Logout</a
+        >
+      </div>
+    </div>
+
+    <div class="container">
+      <h1 class="page-title">Order Management</h1>
+
+      <div class="filters">
+        <div class="filter-group">
+          <label>Status</label>
+          <select onchange="window.location.href = '?status=' + this.value">
+            <option value="">All Status</option>
+            {% for status_code, status_name in status_choices %}
+            <option value="{{ status_code }}">{{ status_name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>From Date</label>
+          <input
+            type="date"
+            name="date_from"
+            onchange="window.location.href = '?date_from=' + this.value"
+          />
+        </div>
+        <div class="filter-group">
+          <label>To Date</label>
+          <input
+            type="date"
+            name="date_to"
+            onchange="window.location.href = '?date_to=' + this.value"
+          />
+        </div>
+      </div>
+
+      <div class="orders-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Product</th>
+              <th>Customer</th>
+              <th>Quantity</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in order_items %}
+            <tr>
+              <td>#{{ item.order.id }}</td>
+              <td>{{ item.product.name }}</td>
+              <td>{{ item.order.customer_name }}</td>
+              <td>{{ item.quantity }}</td>
+              <td>₹{{ item.get_total_price|floatformat:2 }}</td>
+              <td>
+                <span
+                  class="status-badge {% if item.status == 'Pending' %}pending{% elif item.status == 'Accepted' %}accepted{% elif item.status == 'Packed' %}packed{% elif item.status == 'Out for Delivery' %}delivery{% elif item.status == 'Delivered' %}delivered{% else %}cancelled{% endif %}"
+                >
+                  {{ item.status }}
+                </span>
+              </td>
+              <td>{{ item.created_at|date:"M d, Y" }}</td>
+              <td>
+                <a
+                  href="{% url 'vendor_order_detail' item.id %}"
+                  class="btn-view"
+                  >View</a
+                >
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td
+                colspan="8"
+                style="text-align: center; padding: 40px; color: #999"
+              >
+                No orders found
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>

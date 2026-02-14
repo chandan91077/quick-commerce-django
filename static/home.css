@@ -373,6 +373,11 @@ body {
     border: none;
     cursor: pointer;
     font-weight: 500;
+    transition: color 0.2s;
+}
+
+.dropbtn:hover {
+    color: #1ec0a5;
 }
 
 .dropdown-content {
@@ -381,12 +386,14 @@ body {
     right: 0;
     top: 100%;
     background-color: #fff;
-    min-width: 250px;
-    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    min-width: 280px;
+    max-width: 320px;
+    box-shadow: 0px 8px 24px 0px rgba(0, 0, 0, 0.15);
     z-index: 1000;
-    border-radius: 8px;
+    border-radius: 12px;
     overflow: hidden;
     animation: fadeIn 0.2s ease-in-out;
+    border: 1px solid #e5e5e5;
 }
 
 @keyframes fadeIn {
@@ -406,20 +413,22 @@ body {
 }
 
 .dropdown-header {
-    padding: 15px 20px;
-    background-color: #f9f9f9;
+    padding: 18px 20px;
+    background: linear-gradient(135deg, #1ec0a5 0%, #17a88f 100%);
+    color: white;
 }
 
 .dropdown-header h3 {
     margin: 0;
     font-size: 16px;
-    color: #333;
+    color: white;
+    font-weight: 600;
 }
 
 .dropdown-header p {
     margin: 5px 0 0;
-    font-size: 14px;
-    color: #666;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .dropdown-content hr {
@@ -428,18 +437,61 @@ body {
     border-top: 1px solid #eee;
 }
 
+.dropdown-section {
+    padding: 8px 0;
+}
+
+.section-title {
+    padding: 8px 20px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
 .dropdown-content a {
     color: #333;
     padding: 12px 20px;
     text-decoration: none;
-    display: block;
+    display: flex;
+    align-items: center;
     font-size: 14px;
-    transition: background-color 0.2s;
+    transition: all 0.2s;
+}
+
+.dropdown-content a i {
+    margin-right: 12px;
+    width: 18px;
+    color: #666;
+    font-size: 14px;
 }
 
 .dropdown-content a:hover {
-    background-color: #f1f1f1;
+    background-color: #f8f8f8;
     color: #1ec0a5;
+    padding-left: 24px;
+}
+
+.dropdown-content a:hover i {
+    color: #1ec0a5;
+}
+
+.vendor-link {
+    position: relative;
+}
+
+.vendor-section {
+    background-color: #f9fcfb;
+}
+
+.become-vendor-link {
+    color: #0c831f !important;
+    font-weight: 600;
+}
+
+.become-vendor-link:hover {
+    background-color: #e8f5f0 !important;
 }
 
 .logout-link {
@@ -448,6 +500,7 @@ body {
 
 .logout-link:hover {
     background-color: #fff0f0 !important;
+    color: #c0392b !important;
 }
 
 /* QR SECTION */
@@ -482,4 +535,31 @@ body {
     margin: 4px 0 0;
     font-size: 10px;
     color: #888;
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 768px) {
+    .header {
+        flex-wrap: wrap;
+        padding: 10px 15px;
+    }
+
+    .header-location {
+        order: 2;
+        width: 100%;
+        margin-left: 0;
+        margin-top: 10px;
+    }
+
+    .header-search {
+        order: 3;
+        width: 100%;
+        margin: 10px 0;
+    }
+
+    .dropdown-content {
+        right: auto;
+        left: 0;
+        min-width: 260px;
+    }
 }

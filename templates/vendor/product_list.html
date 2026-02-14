@@ -1,0 +1,163 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Products - Blinkit Vendor</title>
+    <link rel="stylesheet" href="{% static 'home.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="{% static 'vendor/vendor.css' %}" />
+  </head>
+
+  <body>
+    <div class="vendor-header">
+      <div class="vendor-logo">
+        <h1>blink<span>it</span></h1>
+      </div>
+      <div class="vendor-nav">
+        <a href="{% url 'vendor_dashboard' %}"
+          ><i class="fas fa-chart-line"></i> Dashboard</a
+        >
+        <a href="{% url 'product_list' %}"
+          ><i class="fas fa-box"></i> Products</a
+        >
+        <a href="{% url 'vendor_orders' %}"
+          ><i class="fas fa-shopping-bag"></i> Orders</a
+        >
+        <a href="{% url 'earnings_report' %}"
+          ><i class="fas fa-rupee-sign"></i> Earnings</a
+        >
+        <a href="{% url 'vendor_profile' %}"
+          ><i class="fas fa-user-cog"></i> Profile</a
+        >
+        <a href="{% url 'logout_vendor' %}"
+          ><i class="fas fa-sign-out-alt"></i> Logout</a
+        >
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="page-header">
+        <h1 class="page-title">My Products</h1>
+        <a href="{% url 'add_product' %}" class="btn-add">
+          <i class="fas fa-plus-circle"></i> Add New Product
+        </a>
+      </div>
+
+      <div class="filters">
+        <div class="filter-group">
+          <label>Category</label>
+          <select onchange="window.location.href = '?category=' + this.value">
+            <option value="">All Categories</option>
+            {% for category in categories %}
+            <option value="{{ category.id }}">{{ category.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Availability</label>
+          <select
+            onchange="window.location.href = '?availability=' + this.value"
+          >
+            <option value="">All</option>
+            <option value="available">Available</option>
+            <option value="unavailable">Unavailable</option>
+          </select>
+        </div>
+      </div>
+
+      {% if products %}
+      <div class="products-grid">
+        {% for product in products %}
+        <div class="product-card">
+          {% if product.image %}
+          <img
+            src="{{ product.image.url }}"
+            alt="{{ product.name }}"
+            class="product-image"
+          />
+          {% else %}
+          <div
+            class="product-image"
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              color: #999;
+            "
+          >
+            <i class="fas fa-image" style="font-size: 40px"></i>
+          </div>
+          {% endif %}
+
+          <div class="product-body">
+            <div class="product-name">{{ product.name }}</div>
+            <div class="product-category">
+              <i class="fas fa-tag"></i> {{
+              product.category.name|default:"Uncategorized" }}
+            </div>
+            <div class="product-price">
+              {% if product.discount_price %}
+              <span
+                style="
+                  text-decoration: line-through;
+                  font-size: 14px;
+                  color: #999;
+                "
+                >₹{{ product.price }}</span
+              >
+              ₹{{ product.discount_price }} {% else %} ₹{{ product.price }} {%
+              endif %}
+            </div>
+            <div
+              class="product-stock {% if product.quantity == 0 %}stock-out{% elif product.is_low_stock %}stock-low{% else %}stock-good{% endif %}"
+            >
+              <i class="fas fa-box"></i> Stock: {{ product.quantity }} {{
+              product.unit }}
+            </div>
+            <div style="margin-bottom: 10px">
+              <span
+                class="status-badge {% if product.is_available %}badge-available{% else %}badge-unavailable{% endif %}"
+              >
+                {% if product.is_available %}Available{% else %}Unavailable{%
+                endif %}
+              </span>
+            </div>
+            <div class="product-actions">
+              <a
+                href="{% url 'edit_product' product.id %}"
+                class="btn btn-edit"
+              >
+                <i class="fas fa-edit"></i> Edit
+              </a>
+              <a
+                href="{% url 'toggle_product_availability' product.id %}"
+                class="btn btn-toggle"
+              >
+                <i class="fas fa-toggle-on"></i> Toggle
+              </a>
+              <a
+                href="{% url 'delete_product' product.id %}"
+                class="btn btn-delete"
+                onclick="return confirm('Delete this product?');"
+              >
+                <i class="fas fa-trash"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="no-products">
+        <i class="fas fa-box-open"></i>
+        <p>No products found. Add your first product to get started!</p>
+      </div>
+      {% endif %}
+    </div>
+  </body>
+</html>
