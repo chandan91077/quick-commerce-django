@@ -15,6 +15,8 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 
+from .models import ContactMessage
+
 
 # ==================== PUBLIC VIEWS ====================
 
@@ -55,6 +57,67 @@ def home(request):
         print(f"Error loading products: {error}")
     
     return render(request, 'home.html', context)
+
+
+def contact_us(request, source='user'):
+    """
+    Handle Contact Us form submissions.
+
+    Stores messages in the database and sends an acknowledgement email.
+    """
+    initial_name = ''
+    initial_email = ''
+
+    if request.user.is_authenticated:
+        initial_name = request.user.get_full_name() or request.user.username
+        initial_email = request.user.email
+
+    if request.method == 'POST':
+        name = request.POST.get('name', '').strip()
+        email = request.POST.get('email', '').strip()
+        subject = request.POST.get('subject', '').strip()
+        message = request.POST.get('message', '').strip()
+
+        if not name or not email or not subject or not message:
+            messages.error(request, 'All fields are required.')
+        else:
+            ContactMessage.objects.create(
+                user=request.user if request.user.is_authenticated else None,
+                source=source,
+                name=name,
+                email=email,
+                subject=subject,
+                message=message,
+            )
+
+            try:
+                ack_subject = 'We received your message'
+                ack_message = (
+                    f"Hi {name},\n\n"
+                    "Thanks for contacting Blinkit. We will reach out to you as soon as possible.\n\n"
+                    "Regards,\n"
+                    "Blinkit Team"
+                )
+                send_mail(
+                    ack_subject,
+                    ack_message,
+                    settings.DEFAULT_FROM_EMAIL,
+                    [email],
+                    fail_silently=False,
+                )
+            except Exception as error:
+                messages.warning(request, 'Message saved, but email could not be sent.')
+                print(f"Contact email error: {error}")
+
+            messages.success(request, 'Thanks! Your message has been sent.')
+            return redirect('contact_us' if source == 'user' else 'vendor_contact')
+
+    context = {
+        'name': initial_name,
+        'email': initial_email,
+        'source': source,
+    }
+    return render(request, 'contact.html', context)
 
 
 # ==================== AUTHENTICATION VIEWS ====================

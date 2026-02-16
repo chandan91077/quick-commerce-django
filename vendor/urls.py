@@ -1,5 +1,6 @@
 from django.urls import path
 from django.views.decorators.cache import cache_page  # might use for stats
+from user import views as user_views
 from . import views
 
 urlpatterns = [
@@ -12,6 +13,7 @@ urlpatterns = [
     # Dashboard
     path('dashboard/', views.vendor_dashboard, name='vendor_dashboard'),
     path('profile/', views.vendor_profile, name='vendor_profile'),
+    path('contact/', user_views.contact_us, {'source': 'vendor'}, name='vendor_contact'),
     
     # Product Management
     path('products/', views.product_list, name='product_list'),
