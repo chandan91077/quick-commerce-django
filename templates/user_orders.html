@@ -1,0 +1,73 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">My Orders</h2>
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    {% if orders %}
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Date</th>
+                            <th>Items</th>
+                            <th>Total Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr>
+                            <td>#{{ order.id }}</td>
+                            <td>{{ order.created_at|date:"d M Y, h:i A" }}</td>
+                            <td>
+                                <ul class="list-unstyled mb-0">
+                                    {% for item in order.items.all %}
+                                    <li class="mb-1">
+                                        <strong>{{ item.product.name }}</strong> x {{ item.quantity }}
+                                        <br>
+                                        <small class="text-muted">Vendor: {{
+                                            item.product.vendor.vendor_profile.business_name|default:item.product.vendor.username
+                                            }}</small>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                            <td>₹{{ order.total_amount }}</td>
+                            <td>
+                                {% for item in order.items.all %}
+                                <div class="mb-1">
+                                    <span
+                                        class="badge {% if item.status == 'Pending' %}bg-warning{% elif item.status == 'Confirmed' %}bg-info{% elif item.status == 'Shipped' %}bg-primary{% elif item.status == 'Delivered' %}bg-success{% else %}bg-danger{% endif %}">
+                                        {{ item.product.name }}: {{ item.status }}
+                                    </span>
+                                </div>
+                                {% endfor %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <i class="fas fa-shopping-basket fa-4x text-muted mb-3"></i>
+        <h3>No orders yet</h3>
+        <p class="text-muted">Start shopping to see your orders here.</p>
+        <a href="{% url 'home' %}" class="btn btn-primary">Start Shopping</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Delete Product - Blinkit Vendor</title>
+    <link rel="stylesheet" href="{% static 'home.css' %}" />
+    <link rel="stylesheet" href="{% static 'vendor/vendor.css' %}" />
+  </head>
+
+  <body>
+    <div class="confirm-box">
+      <h2>Delete Product?</h2>
+      <p>
+        Are you sure you want to delete "<strong>{{ product.name }}</strong>"?
+        This action cannot be undone.
+      </p>
+      <form method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Yes, Delete</button>
+        <a href="{% url 'product_list' %}" class="btn btn-secondary">Cancel</a>
+      </form>
+    </div>
+  </body>
+</html>

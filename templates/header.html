@@ -2,69 +2,92 @@
 
 <!-- HEADER -->
 <header class="header">
+  <!-- LEFT : LOGO -->
+  <div class="header-left">
+    <a href="{% url 'home' %}" style="text-decoration: none; color: inherit">
+      <h1 class="logo">blink<span>it</span></h1>
+    </a>
+  </div>
 
-    <!-- LEFT : LOGO -->
-    <div class="header-left">
-        <h1 class="logo">blink<span>it</span></h1>
+  <!-- LOCATION + DELIVERY -->
+  <div class="header-location">
+    <div class="delivery-text">Delivery in 8 minutes</div>
+
+    <div class="location-bar">
+      <span class="location-icon">📍</span>
+
+      <select class="location-select">
+        <option>B62, Pocket B, South City I, Sector 41</option>
+        <option>Gurgaon, Haryana</option>
+        <option>Delhi, India</option>
+      </select>
     </div>
+  </div>
 
-    <!-- LOCATION + DELIVERY -->
-    <div class="header-location">
-        <div class="delivery-text">Delivery in 8 minutes</div>
+  <!-- SEARCH BAR -->
+  <div class="header-search">
+    <input type="text" placeholder='Search "milk"' />
+  </div>
 
-        <div class="location-bar">
-            <span class="location-icon">📍</span>
-
-            <select class="location-select">
-                <option>B62, Pocket B, South City I, Sector 41</option>
-                <option>Gurgaon, Haryana</option>
-                <option>Delhi, India</option>
-            </select>
+  <!-- RIGHT SIDE -->
+  <div class="header-right">
+    <a href="{% url 'contact_us' %}" class="contact-link">Contact Us</a>
+    {% if user.is_authenticated %}
+    <div class="dropdown">
+      <button class="dropbtn">
+        <i class="fas fa-user-circle me-1"></i> Account ▾
+      </button>
+      <div class="dropdown-content">
+        <div class="dropdown-header">
+          <h3>My Account</h3>
+          <p>{{ user.username }}</p>
         </div>
-    </div>
+        <hr />
 
-    <!-- SEARCH BAR -->
-    <div class="header-search">
-        <input type="text" placeholder='Search "milk"'>
-    </div>
+        <!-- Customer Section -->
+        <div class="dropdown-section">
+          <a href="{% url 'user_orders' %}"><i class="fas fa-shopping-bag"></i> My Orders</a>
+          <a href="#"><i class="fas fa-map-marker-alt"></i> Saved Addresses</a>
 
-    <!-- RIGHT SIDE -->
-    <div class="header-right">
+        </div>
 
-        {% if user.is_authenticated %}
-        <div class="dropdown">
-            <button class="dropbtn">Account ▾</button>
-            <div class="dropdown-content">
-                <div class="dropdown-header">
-                    <h3>My Account</h3>
-                    <p>{{ user.username }}</p>
-                </div>
-                <hr>
-                <a href="#">My Orders</a>
-                <a href="#">Saved Addresses</a>
-                <a href="#">My Prescriptions</a>
-                <a href="#">E-Gift Cards</a>
-                <a href="#">FAQ's</a>
-                <a href="#">Account Privacy</a>
-                <a href="{% url 'logout' %}" class="logout-link">Log Out</a>
-
-                <div class="qr-section">
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Example" alt="QR Code">
-                    <div>
-                        <h4>Simple way to get groceries <br> <span class="highlight">at your doorstep</span></h4>
-                        <p>Scan the QR code and download blinkit app</p>
-                    </div>
-                </div>
-            </div>
+        <!-- Vendor Section (Only if user is a vendor) -->
+        {% if is_vendor %}
+        <hr />
+        <div class="dropdown-section vendor-section">
+          <div class="section-title">Vendor Portal</div>
+          <a href="{% url 'vendor_dashboard' %}" class="vendor-link">
+            <i class="fas fa-chart-line"></i> Go to Vendor Dashboard
+          </a>
         </div>
         {% else %}
-        <a href="{% url 'login' %}" class="login-btn">Login</a>
+        <hr />
+        <div class="dropdown-section">
+          <a href="{% url 'register_vendor' %}" class="become-vendor-link">
+            <i class="fas fa-store"></i> Become a Vendor
+          </a>
+        </div>
         {% endif %}
 
-        <button class="cart-btn">
-            🛒 My Cart
-        </button>
+        <hr />
+        <a href="{% url 'logout' %}" class="logout-link"><i class="fas fa-sign-out-alt"></i> Log Out</a>
 
+        <div class="qr-section">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Example" alt="QR Code" />
+          <div>
+            <h4>
+              Simple way to get groceries <br />
+              <span class="highlight">at your doorstep</span>
+            </h4>
+            <p>Scan the QR code and download blinkit app</p>
+          </div>
+        </div>
+      </div>
     </div>
+    {% else %}
+    <a href="{% url 'login' %}" class="login-btn">Login</a>
+    {% endif %}
 
+    <button class="cart-btn">🛒 My Cart</button>
+  </div>
 </header>

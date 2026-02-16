@@ -1,0 +1,74 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pending Approval - Blinkit Vendor</title>
+    <link rel="stylesheet" href="{% static 'home.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="{% static 'vendor/vendor.css' %}" />
+  </head>
+
+  <body>
+    <div class="pending-container">
+      <div class="pending-icon">
+        <i class="fas fa-clock"></i>
+      </div>
+
+      <h1>Pending Approval</h1>
+      <span class="status-badge">{{ vendor.get_status_display }}</span>
+
+      <div class="info-box">
+        <h3><i class="fas fa-info-circle"></i> What's Next?</h3>
+        <p><strong>Thank you for registering as a vendor!</strong></p>
+        <p>Your application is currently under review by our admin team.</p>
+        <p>
+          You will receive an email notification once your account is approved.
+        </p>
+        <p>This usually takes 24-48 hours.</p>
+      </div>
+
+      <div class="shop-details">
+        <h3>Your Shop Details</h3>
+        <div class="detail-row">
+          <span class="detail-label">Shop Name:</span>
+          <span class="detail-value">{{ vendor.shop_name }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Owner:</span>
+          <span class="detail-value">{{ vendor.owner_name }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Email:</span>
+          <span class="detail-value">{{ vendor.email }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Phone:</span>
+          <span class="detail-value">{{ vendor.phone }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Location:</span>
+          <span class="detail-value"
+            >{{ vendor.city }}, {{ vendor.state }}</span
+          >
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Registered:</span>
+          <span class="detail-value"
+            >{{ vendor.created_at|date:"F d, Y" }}</span
+          >
+        </div>
+      </div>
+
+      <a href="{% url 'logout_vendor' %}" class="btn-logout">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </a>
+
+      <p class="help-text">Need help? Contact us at chandany67071@gmail.com</p>
+    </div>
+  </body>
+</html>
