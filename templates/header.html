@@ -2,92 +2,278 @@
 
 <!-- HEADER -->
 <header class="header">
-  <!-- LEFT : LOGO -->
-  <div class="header-left">
-    <a href="{% url 'home' %}" style="text-decoration: none; color: inherit">
-      <h1 class="logo">blink<span>it</span></h1>
-    </a>
-  </div>
+  <div class="container-fluid">
+    <div class="header-content">
+      <!-- LEFT : LOGO & LOCATION -->
+      <div class="header-left">
+        <a href="{% url 'home' %}" style="text-decoration: none;">
+          <h1 class="logo">blink<span style="color: #0c831f;">it</span></h1>
+        </a>
 
-  <!-- LOCATION + DELIVERY -->
-  <div class="header-location">
-    <div class="delivery-text">Delivery in 8 minutes</div>
-
-    <div class="location-bar">
-      <span class="location-icon">📍</span>
-
-      <select class="location-select">
-        <option>B62, Pocket B, South City I, Sector 41</option>
-        <option>Gurgaon, Haryana</option>
-        <option>Delhi, India</option>
-      </select>
-    </div>
-  </div>
-
-  <!-- SEARCH BAR -->
-  <div class="header-search">
-    <input type="text" placeholder='Search "milk"' />
-  </div>
-
-  <!-- RIGHT SIDE -->
-  <div class="header-right">
-    <a href="{% url 'contact_us' %}" class="contact-link">Contact Us</a>
-    {% if user.is_authenticated %}
-    <div class="dropdown">
-      <button class="dropbtn">
-        <i class="fas fa-user-circle me-1"></i> Account ▾
-      </button>
-      <div class="dropdown-content">
-        <div class="dropdown-header">
-          <h3>My Account</h3>
-          <p>{{ user.username }}</p>
-        </div>
-        <hr />
-
-        <!-- Customer Section -->
-        <div class="dropdown-section">
-          <a href="{% url 'user_orders' %}"><i class="fas fa-shopping-bag"></i> My Orders</a>
-          <a href="#"><i class="fas fa-map-marker-alt"></i> Saved Addresses</a>
-
-        </div>
-
-        <!-- Vendor Section (Only if user is a vendor) -->
-        {% if is_vendor %}
-        <hr />
-        <div class="dropdown-section vendor-section">
-          <div class="section-title">Vendor Portal</div>
-          <a href="{% url 'vendor_dashboard' %}" class="vendor-link">
-            <i class="fas fa-chart-line"></i> Go to Vendor Dashboard
-          </a>
-        </div>
-        {% else %}
-        <hr />
-        <div class="dropdown-section">
-          <a href="{% url 'register_vendor' %}" class="become-vendor-link">
-            <i class="fas fa-store"></i> Become a Vendor
-          </a>
-        </div>
-        {% endif %}
-
-        <hr />
-        <a href="{% url 'logout' %}" class="logout-link"><i class="fas fa-sign-out-alt"></i> Log Out</a>
-
-        <div class="qr-section">
-          <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Example" alt="QR Code" />
-          <div>
-            <h4>
-              Simple way to get groceries <br />
-              <span class="highlight">at your doorstep</span>
-            </h4>
-            <p>Scan the QR code and download blinkit app</p>
+        <div class="location-box">
+          <div class="delivery-title">Delivery in 8 minutes</div>
+          <div class="location-select">
+            B62, Pocket B, South City I, Sector 41 <i class="fas fa-caret-down"></i>
           </div>
         </div>
       </div>
-    </div>
-    {% else %}
-    <a href="{% url 'login' %}" class="login-btn">Login</a>
-    {% endif %}
 
-    <button class="cart-btn">🛒 My Cart</button>
+      <!-- SEARCH BAR -->
+      <div class="header-search">
+        <div class="search-container">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" placeholder='Search "milk"' />
+        </div>
+      </div>
+
+      <!-- RIGHT SIDE -->
+      <div class="header-right">
+        {% if user.is_authenticated %}
+        <div class="dropdown">
+          <button class="account-btn">
+            Account
+          </button>
+          <div class="dropdown-content">
+            <div class="dropdown-header">
+              <h3>My Account</h3>
+              <p>{{ user.username }}</p>
+            </div>
+            <hr />
+            <a href="{% url 'user_orders' %}"><i class="fas fa-shopping-bag"></i> My Orders</a>
+            <a href="#"><i class="fas fa-map-marker-alt"></i> Saved Addresses</a>
+
+            {% if is_vendor %}
+            <hr />
+            <a href="{% url 'vendor_dashboard' %}"><i class="fas fa-store"></i> Vendor Dashboard</a>
+            {% else %}
+            <hr />
+            <a href="{% url 'register_vendor' %}"><i class="fas fa-store"></i> Become a Vendor</a>
+            {% endif %}
+
+            <hr />
+            <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+          </div>
+        </div>
+        {% else %}
+        <a href="{% url 'login' %}" class="login-link">Login</a>
+        {% endif %}
+
+        <button class="cart-btn">
+          <i class="fas fa-shopping-cart"></i>
+          <span style="margin-left: 5px; font-weight: 600;">My Cart</span>
+        </button>
+      </div>
+    </div>
   </div>
 </header>
+
+<style>
+  .header {
+    background-color: white;
+    border-bottom: 1px solid #f0f0f0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    padding: 15px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  }
+
+  .container-fluid {
+    padding: 0 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+  }
+
+  /* Left Side */
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    min-width: 350px;
+  }
+
+  .logo {
+    font-size: 28px;
+    font-weight: 800;
+    color: #fce300;
+    /* Use Blinkit yellow if wanted, or black */
+    color: #333;
+    margin: 0;
+    letter-spacing: -1px;
+  }
+
+  .logo span {
+    color: #0c831f;
+  }
+
+  .location-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .delivery-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #333;
+    line-height: 1.2;
+  }
+
+  .location-select {
+    font-size: 13px;
+    color: #666;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+  }
+
+  /* Search */
+  .header-search {
+    flex: 1;
+    max-width: 600px;
+  }
+
+  .search-container {
+    position: relative;
+    background: #f8f8f8;
+    border: 1px solid #f0f0f0;
+    border-radius: 8px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    transition: border 0.2s;
+  }
+
+  .search-container:focus-within {
+    border-color: #e0e0e0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    background: white;
+  }
+
+  .search-icon {
+    color: #999;
+    font-size: 18px;
+    margin-right: 12px;
+  }
+
+  .search-container input {
+    border: none;
+    background: transparent;
+    width: 100%;
+    height: 100%;
+    outline: none;
+    font-size: 14px;
+    color: #333;
+  }
+
+  /* Right Side */
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    min-width: 200px;
+    justify-content: flex-end;
+  }
+
+  .login-link {
+    font-size: 16px;
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .cart-btn {
+    background-color: #0c831f;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: background 0.2s;
+  }
+
+  .cart-btn:hover {
+    background-color: #096b19;
+  }
+
+  .account-btn {
+    background: none;
+    border: none;
+    font-size: 16px;
+    color: #333;
+    font-weight: 400;
+    cursor: pointer;
+  }
+
+  /* Dropdown */
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: white;
+    min-width: 220px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    z-index: 1001;
+    border-radius: 8px;
+    padding: 10px 0;
+    border: 1px solid #eee;
+  }
+
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+
+  .dropdown-header {
+    padding: 10px 20px;
+  }
+
+  .dropdown-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .dropdown-header p {
+    margin: 0;
+    font-size: 13px;
+    color: #666;
+  }
+
+  .dropdown-content a {
+    color: #333;
+    padding: 10px 20px;
+    text-decoration: none;
+    display: block;
+    font-size: 14px;
+    transition: background 0.2s;
+  }
+
+  .dropdown-content a:hover {
+    background-color: #f9f9f9;
+    color: #0c831f;
+  }
+
+  hr {
+    margin: 5px 0;
+    border: 0;
+    border-top: 1px solid #eee;
+  }
+</style>

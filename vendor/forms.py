@@ -144,7 +144,7 @@ class ProductForm(forms.ModelForm):
         fields = [
             'name', 'category', 'description', 'price', 'discount_price',
             'quantity', 'weight', 'unit', 'low_stock_threshold',
-            'image', 'is_available'
+            'image'
         ]
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Product Name'}),
@@ -156,7 +156,6 @@ class ProductForm(forms.ModelForm):
             'unit': forms.Select(attrs={'class': 'form-control'}),
             'low_stock_threshold': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '10'}),
             'image': forms.FileInput(attrs={'class': 'form-control'}),
-            'is_available': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
     
     def clean(self):

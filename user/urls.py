@@ -13,4 +13,5 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('track-orders/', views.user_orders, name='user_orders'),
     path('place-order/<int:product_id>/', views.place_order, name='place_order'),
+    path('category/<int:category_id>/', views.category_products, name='category_products'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

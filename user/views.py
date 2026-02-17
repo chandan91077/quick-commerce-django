@@ -20,17 +20,24 @@ from .models import ContactMessage
 
 # ==================== PUBLIC VIEWS ====================
 
+
 def home(request):
     """
     Display home page with featured products from approved vendors.
     
     Context:
-        products: Latest 20 active products from approved vendors
+        products: Latest 20 active products from approved vendors (filtered by category if selected)
         categories: All active product categories
+        selected_category: The currently selected category object (if any)
     """
     try:
         from vendor.models import Product, Category
         
+        # Get category filter
+        category_id = request.GET.get('category')
+        selected_category = None
+        
+        # Base query
         products = Product.objects.filter(
             is_active=True,
             is_available=True,
@@ -38,25 +45,142 @@ def home(request):
         ).select_related(
             'category',
             'vendor'
-        ).order_by('-created_at')[:20]
+        )
+        
+        # Apply filter if selected
+        if category_id:
+            try:
+                selected_category = Category.objects.get(id=category_id)
+                products = products.filter(category=selected_category)
+            except Category.DoesNotExist:
+                pass
+        
+        # Order and limit
+        products = products.order_by('-created_at')[:20]
         
         categories = Category.objects.filter(
             is_active=True
         ).order_by('name')
         
+        # Map images to categories (temporary helper until images are in DB)
+        # TODO: Add image field to Category model in future
+        category_images = {
+            'Paan Corner': 'images/paan-corner_web.png',
+            'Dairy, Bread & Eggs': 'images/Dairy,Bread&Eggs.png',
+            'Fruits & Vegetables': 'images/Fruits&Vegetables.png',
+            'Cold Drinks & Juices': 'images/ColdDrinks&Juices.png',
+            'Snacks & Munchies': 'images/Snacks&Munchies.png',
+            'Breakfast & Instant Food': 'images/Breakfast&InstantFood.png',
+            'Sweet Tooth': 'images/SweetTooth.png',
+            'Bakery & Biscuits': 'images/Bakery&Biscuits.png',
+            'Tea, Coffee & Milk Drinks': 'images/Tea,Coffee&MilkDrinks.png',
+            'Atta, Rice & Dal': 'images/Atta,Rice&Dal.png',
+            'Masala, Oil & More': 'images/Masala,Oil&More.png',
+            'Sauces & Spreads': 'images/Sauces&Spreads.png',
+            'Chicken, Meat & Fish': 'images/Chicken,Meat&Fish.png',
+            'Organic & Healthy Living': 'images/Organic&HealthyLiving.png',
+            'Baby Care': 'images/BabyCare.png',
+            'Pharma & Wellness': 'images/Pharma&Wellness.png',
+            'Cleaning Essentials': 'images/CleaningEssentials.png',
+            'Home & Office': 'images/Home&Office.png',
+            'Personal Care': 'images/PersonalCare.png',
+            'Pet Care': 'images/PetCare.png',
+        }
+        
+        # Attach images to category objects
+        for cat in categories:
+            cat.image_url = category_images.get(cat.name, 'images/default_cat.png')
+            
+        # Get special category IDs for banner cards
+        special_cats = {
+            'pharma': Category.objects.filter(name__icontains='Pharma').first(),
+            'pet': Category.objects.filter(name__icontains='Pet').first(),
+            'baby': Category.objects.filter(name__icontains='Baby').first(),
+        }
+        
         context = {
             'products': products,
-            'categories': categories
+            'categories': categories,
+            'selected_category': selected_category,
+            'special_cats': special_cats
         }
     except Exception as error:
         messages.error(request, 'Error loading products. Please try again later.')
         context = {
             'products': [],
-            'categories': []
+            'categories': [],
+            'selected_category': None,
+            'special_cats': {}
         }
         print(f"Error loading products: {error}")
     
     return render(request, 'home.html', context)
+
+
+def category_products(request, category_id):
+    """
+    Display all products for a specific category.
+    """
+    try:
+        from vendor.models import Product, Category
+        
+        category = Category.objects.get(id=category_id)
+        
+        products = Product.objects.filter(
+            category=category,
+            is_active=True,
+            is_available=True,
+            vendor__status='approved'
+        ).select_related('vendor').order_by('-created_at')
+        
+        # Get all categories for sidebar
+        categories = Category.objects.filter(is_active=True).order_by('name')
+        
+        # Map image for the category header and sidebar (reusing same logic)
+        category_images = {
+            'Paan Corner': 'images/paan-corner_web.png',
+            'Dairy, Bread & Eggs': 'images/Dairy,Bread&Eggs.png',
+            'Fruits & Vegetables': 'images/Fruits&Vegetables.png',
+            'Cold Drinks & Juices': 'images/ColdDrinks&Juices.png',
+            'Snacks & Munchies': 'images/Snacks&Munchies.png',
+            'Breakfast & Instant Food': 'images/Breakfast&InstantFood.png',
+            'Sweet Tooth': 'images/SweetTooth.png',
+            'Bakery & Biscuits': 'images/Bakery&Biscuits.png',
+            'Tea, Coffee & Milk Drinks': 'images/Tea,Coffee&MilkDrinks.png',
+            'Atta, Rice & Dal': 'images/Atta,Rice&Dal.png',
+            'Masala, Oil & More': 'images/Masala,Oil&More.png',
+            'Sauces & Spreads': 'images/Sauces&Spreads.png',
+            'Chicken, Meat & Fish': 'images/Chicken,Meat&Fish.png',
+            'Organic & Healthy Living': 'images/Organic&HealthyLiving.png',
+            'Baby Care': 'images/BabyCare.png',
+            'Pharma & Wellness': 'images/Pharma&Wellness.png',
+            'Cleaning Essentials': 'images/CleaningEssentials.png',
+            'Home & Office': 'images/Home&Office.png',
+            'Personal Care': 'images/PersonalCare.png',
+            'Pet Care': 'images/PetCare.png',
+        }
+        
+        # Attach images to all categories
+        for cat in categories:
+            cat.image_url = category_images.get(cat.name, 'images/default_cat.png')
+            
+        # Attach image for current category specifically (though it's in the list too)
+        category.image_url = category_images.get(category.name, 'images/default_cat.png')
+        
+        context = {
+            'category': category,
+            'products': products,
+            'categories': categories # Passed for sidebar
+        }
+        return render(request, 'category_products.html', context)
+        
+    except Category.DoesNotExist:
+        messages.error(request, 'Category not found')
+        return redirect('home')
+    except Exception as error:
+        print(f"Error loading category products: {error}")
+        messages.error(request, 'Error loading products')
+        return redirect('home')
 
 
 def contact_us(request, source='user'):
