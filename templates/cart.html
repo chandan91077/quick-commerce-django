@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Fixed Vendor Name Display -->
+    <h2 class="mb-4">Shopping Cart</h2>
+    {% if cart.items.all %}
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 40%">Product</th>
+                                    <th style="width: 20%">Price</th>
+                                    <th style="width: 25%">Quantity</th>
+                                    <th style="width: 15%">Subtotal</th>
+                                    <th style="width: 5%"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in cart.items.all %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            {% if item.product.image %}
+                                            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}"
+                                                class="rounded me-3"
+                                                style="width: 50px; height: 50px; object-fit: cover;">
+                                            {% else %}
+                                            <div class="rounded me-3 d-flex align-items-center justify-content-center bg-light text-muted"
+                                                style="width: 50px; height: 50px;">
+                                                <i class="fas fa-image"></i>
+                                            </div>
+                                            {% endif %}
+                                            <div>
+                                                <h6 class="mb-0">{{ item.product.name }}</h6>
+                                                <small class="text-muted">Vendor: {{ item.product.vendor.shop_name }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>₹{{ item.product.get_display_price }}</td>
+                                    <td>
+                                        <div class="input-group input-group-sm" style="width: 100px;">
+                                            <a href="{% url 'update_cart_item' item.id 'decrement' %}"
+                                                class="btn btn-outline-secondary">-</a>
+                                            <span class="form-control text-center">{{ item.quantity }}</span>
+                                            <a href="{% url 'update_cart_item' item.id 'increment' %}"
+                                                class="btn btn-outline-secondary">+</a>
+                                        </div>
+                                    </td>
+                                    <td><strong>₹{{ item.get_total_price }}</strong></td>
+                                    <td>
+                                        <a href="{% url 'remove_from_cart' item.id %}" class="text-danger"
+                                            title="Remove">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Order Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Total Items:</span>
+                        <strong>{{ cart.get_total_items }}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Subtotal:</span>
+                        <strong>₹{{ cart.get_total_price }}</strong>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-4">
+                        <span class="h5">Total:</span>
+                        <strong class="h5 text-primary">₹{{ cart.get_total_price }}</strong>
+                    </div>
+                    <div class="d-grid">
+                        <a href="{% url 'checkout' %}" class="btn btn-success btn-lg">Proceed to Checkout</a>
+                    </div>
+                    <div class="d-grid mt-2">
+                        <a href="{% url 'home' %}" class="btn btn-outline-secondary">Continue Shopping</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <i class="fas fa-shopping-cart fa-4x text-muted mb-3"></i>
+        <h3>Your cart is empty</h3>
+        <p class="text-muted">Looks like you haven't added anything to your cart yet.</p>
+        <a href="{% url 'home' %}" class="btn btn-primary btn-lg mt-3">Start Shopping</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

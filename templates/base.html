@@ -1,0 +1,107 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Blinkit - Vendor Panel{% endblock %}</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{% static 'style.css' %}" />
+
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+  <!-- Header -->
+  {% include 'header.html' %}
+
+  <!-- Main Content -->
+  <main class="min-vh-100">{% block content %}{% endblock %}</main>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-white text-center py-4 mt-5">
+    <div class="container">
+      <p>&copy; 2024 Blinkit. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  {% block extra_js %}{% endblock %}
+  <!-- Floating Contact Button -->
+  <a href="{% url 'contact_us' %}" id="floating-contact" class="floating-contact">
+    <i class="fas fa-headset"></i> Contact Us
+  </a>
+
+  <style>
+    .floating-contact {
+      position: fixed;
+      bottom: 30px;
+      left: 30px;
+      background-color: #0c831f;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 30px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      text-decoration: none;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 10000;
+      transition: all 0.3s ease;
+      opacity: 0;
+      transform: translateY(20px) scale(0.9);
+      visibility: hidden;
+    }
+
+    .floating-contact.visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .floating-contact:hover {
+      background-color: #096b19;
+      color: white;
+      transform: translateY(-2px);
+    }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const floatingContact = document.getElementById('floating-contact');
+
+      function checkScroll() {
+        if (window.scrollY > 100) {
+          floatingContact.classList.add('visible');
+        } else {
+          floatingContact.classList.remove('visible');
+        }
+      }
+
+      window.addEventListener('scroll', checkScroll);
+      // Run once on load in case we start scrolled down
+      checkScroll();
+
+      // Auto-dismiss alerts after 5 seconds
+      var alerts = document.querySelectorAll('.alert');
+      alerts.forEach(function (alert) {
+        setTimeout(function () {
+          var bsAlert = new bootstrap.Alert(alert);
+          bsAlert.close();
+        }, 5000);
+      });
+    });
+  </script>
+</body>
+
+</html>

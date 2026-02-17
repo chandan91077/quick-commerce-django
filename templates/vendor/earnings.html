@@ -1,0 +1,119 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Earnings Report - Blinkit Vendor</title>
+  <link rel="stylesheet" href="{% static 'home.css' %}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <link rel="stylesheet" href="{% static 'vendor/vendor.css' %}" />
+</head>
+
+<body>
+  <div class="vendor-header">
+    <div class="vendor-logo">
+      <h1>blink<span>it</span></h1>
+    </div>
+    <div class="vendor-nav">
+      <a href="{% url 'vendor_dashboard' %}"><i class="fas fa-chart-line"></i> Dashboard</a>
+      <a href="{% url 'product_list' %}"><i class="fas fa-box"></i> Products</a>
+      <a href="{% url 'vendor_orders' %}"><i class="fas fa-shopping-bag"></i> Orders</a>
+      <a href="{% url 'earnings_report' %}"><i class="fas fa-rupee-sign"></i> Earnings</a>
+      <a href="{% url 'logout_vendor' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      <a href="{% url 'vendor_contact' %}"><i class="fas fa-envelope"></i> Contact</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="page-header">
+      <h1 class="page-title">Earnings & Analytics</h1>
+      <a href="{% url 'export_sales_csv' %}" class="btn-export">
+        <i class="fas fa-download"></i> Export CSV
+      </a>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value">₹{{ total_revenue|floatformat:2 }}</div>
+        <div class="stat-label">Total Revenue</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ total_orders }}</div>
+        <div class="stat-label">Total Orders</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ total_items_sold }}</div>
+        <div class="stat-label">Items Sold</div>
+      </div>
+    </div>
+
+    <div class="filters">
+      <div class="filter-group">
+        <label>From Date</label>
+        <input type="date" name="date_from" />
+      </div>
+      <div class="filter-group">
+        <label>To Date</label>
+        <input type="date" name="date_to" />
+      </div>
+      <div class="filter-group">
+        <label>Product</label>
+        <select onchange="window.location.href = '?product=' + this.value">
+          <option value="">All Products</option>
+          {% for product in products %}
+          <option value="{{ product.slug }}">{{ product.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2 class="section-title">Top Products by Revenue</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Orders</th>
+            <th>Revenue</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in revenue_by_product %}
+          <tr>
+            <td>{{ item.product__name }}</td>
+            <td>{{ item.orders }}</td>
+            <td>₹{{ item.revenue|floatformat:2 }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2 class="section-title">Revenue by Category</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Orders</th>
+            <th>Revenue</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in revenue_by_category %}
+          <tr>
+            <td>
+              {{ item.product__category__name|default:"Uncategorized" }}
+            </td>
+            <td>{{ item.orders }}</td>
+            <td>₹{{ item.revenue|floatformat:2 }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+
+</html>

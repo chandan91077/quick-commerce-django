@@ -1,0 +1,85 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Create account</title>
+  <link rel="stylesheet" href="{% static 'style.css' %}" />
+</head>
+
+<body class="auth-page">
+  <main class="auth-shell">
+    <section class="auth-card" aria-labelledby="register-title">
+      <header class="auth-header">
+        <p class="auth-kicker">Get started</p>
+        <h1 id="register-title" class="auth-title">Create your account</h1>
+        <p class="auth-subtitle">It only takes a minute wait for the time.</p>
+      </header>
+
+      {% if messages %}
+      <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <form class="auth-form" method="post" action="">
+        {% csrf_token %}
+        <label class="field">
+          <span class="field-label">Username</span>
+          <input class="field-input" type="text" name="username" placeholder="Choose a username" autocomplete="username"
+            required />
+        </label>
+
+        <label class="field">
+          <span class="field-label">Email (optional)</span>
+          <input class="field-input" type="email" name="email" placeholder="your@email.com" autocomplete="email" />
+        </label>
+
+        <label class="field">
+          <span class="field-label">Password</span>
+          <input class="field-input" type="password" name="password" placeholder="Create a password"
+            autocomplete="new-password" required />
+        </label>
+
+        <label class="field">
+          <span class="field-label">Confirm password</span>
+          <input class="field-input" type="password" name="confirm_password" placeholder="Repeat your password"
+            autocomplete="new-password" required />
+        </label>
+
+        <label class="checkbox legal">
+          <input type="checkbox" name="terms" required />
+          <span>
+            I agree to the <a class="link" href="#">Terms</a> and
+            <a class="link" href="#">Privacy Policy</a>.
+          </span>
+        </label>
+
+        <button class="button primary" type="submit">Create account</button>
+      </form>
+
+      <footer class="auth-footer">
+        <span>Already have an account?</span>
+        <a class="link" href="{% url 'login' %}">Login</a>
+      </footer>
+    </section>
+
+    <aside class="auth-panel" aria-hidden="true">
+      <div class="panel-content">
+        <h2>Join a growing community.</h2>
+        <p>Keep your projects moving with a workspace designed for focus.</p>
+        <ul class="panel-list">
+          <li>Personalized dashboard</li>
+          <li>Secure data storage</li>
+          <li>Team collaboration</li>
+        </ul>
+      </div>
+    </aside>
+  </main>
+</body>
+
+</html>
