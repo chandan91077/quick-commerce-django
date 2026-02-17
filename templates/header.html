@@ -58,10 +58,20 @@
         <a href="{% url 'login' %}" class="login-link">Login</a>
         {% endif %}
 
+<<<<<<< HEAD
         <button class="cart-btn">
           <i class="fas fa-shopping-cart"></i>
           <span style="margin-left: 5px; font-weight: 600;">My Cart</span>
         </button>
+=======
+        <a href="{% url 'view_cart' %}" class="cart-btn" style="text-decoration: none;">
+          <i class="fas fa-shopping-cart"></i>
+          <span style="margin-left: 5px; font-weight: 600;">My Cart</span>
+          {% if cart_count > 0 %}
+          <span class="badge bg-danger ms-2 rounded-pill">{{ cart_count }}</span>
+          {% endif %}
+        </a>
+>>>>>>> 66b6aa0 (added the checkout page)
       </div>
     </div>
   </div>

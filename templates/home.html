@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -344,3 +345,207 @@
 </body>
 
 </html>
+=======
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Blinkit Clone - Home{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'home.css' %}?v=1.1">
+<style>
+    /* Ensure product grid looks good if not fully covered by home.css */
+    .product-grid {
+        display: flex;
+        overflow-x: auto;
+        gap: 20px;
+        padding: 20px 0;
+        scrollbar-width: thin;
+    }
+
+    .product-grid::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    .product-grid::-webkit-scrollbar-thumb {
+        background-color: #e0e0e0;
+        border-radius: 3px;
+    }
+
+    .product-card {
+        min-width: 200px;
+        max-width: 200px;
+        flex-shrink: 0;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 12px;
+        text-align: center;
+        background: white;
+        transition: box-shadow 0.2s;
+    }
+
+    .product-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-card img {
+        width: 100%;
+        height: 150px;
+        object-fit: contain;
+        border-radius: 4px;
+        margin-bottom: 10px;
+    }
+
+    .product-card h3 {
+        font-size: 15px;
+        margin: 8px 0;
+        font-weight: 600;
+        color: #333;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .product-card p {
+        font-size: 13px;
+        color: #888;
+    }
+
+    .product-card .price {
+        font-weight: bold;
+        color: #333;
+        margin: 8px 0;
+        font-size: 16px;
+    }
+
+    .btn-buy {
+        background-color: #0c831f;
+        color: white;
+        border: none;
+        padding: 6px 0;
+        width: 100%;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+    .btn-buy:hover {
+        background-color: #096b19;
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- MAIN CONTAINER -->
+<div class="container">
+
+    <!-- TOP BANNER -->
+    <div class="banner" style="background-image: url('{% static 'images/Frame-1437256605-2-2.jpg' %}');">
+        <div class="banner-text">
+            <h1>Stock up on daily essentials</h1>
+            <p>
+                Get farm-fresh goodness & a range of exotic <br>
+                fruits, vegetables, eggs & more
+            </p>
+            <a href="#shop-categories"><button style="cursor: pointer;">Shop Now</button></a>
+        </div>
+    </div>
+
+    <!-- SMALL CARDS -->
+    <div class="small-cards">
+
+        <!-- CARD 1 -->
+        <div class="card pharmacy">
+            <div>
+                <h3>Pharmacy at your doorstep!</h3>
+                <p>Cough syrups, pain relief sprays & more</p>
+                {% if special_cats.pharma %}
+                <a href="{% url 'category_products' special_cats.pharma.slug %}"><button>Order Now</button></a>
+                {% else %}
+                <button>Order Now</button>
+                {% endif %}
+            </div>
+            <img src="{% static 'images/pharmacy-WEB.jpg' %}">
+        </div>
+
+        <!-- CARD 2 -->
+        <div class="card pet">
+            <div>
+                <h3>Pet care supplies at your door</h3>
+                <p>Food, treats, toys & more</p>
+                {% if special_cats.pet %}
+                <a href="{% url 'category_products' special_cats.pet.slug %}"><button>Order Now</button></a>
+                {% else %}
+                <button>Order Now</button>
+                {% endif %}
+            </div>
+            <img src="{% static 'images/pet_crystal_WEB-1.jpg' %}">
+        </div>
+
+        <!-- CARD 3 -->
+        <div class="card baby">
+            <div>
+                <h3>No time for a diaper run?</h3>
+                <p>Get baby care essentials</p>
+                {% if special_cats.baby %}
+                <a href="{% url 'category_products' special_cats.baby.slug %}"><button>Order Now</button></a>
+                {% else %}
+                <button>Order Now</button>
+                {% endif %}
+            </div>
+            <img src="{% static 'images/baby_crystal_WEB-1.jpg' %}">
+        </div>
+
+    </div>
+
+    <!-- CATEGORY GRID -->
+    <h2 id="shop-categories" style="margin-top: 20px; scroll-margin-top: 100px;">Shop by Category</h2>
+    <!-- Note: .categories grid style comes from home.css (grid-template-columns: repeat(10, 1fr)) -->
+    <div class="categories">
+        {% for category in categories %}
+        <a href="{% url 'category_products' category.slug %}" class="cat-link"
+            style="text-decoration: none; color: inherit;">
+            <div class="cat">
+                <img src="{% static category.image_url %}" alt="{{ category.name }}">
+                <p>{{ category.name }}</p>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+
+    <!-- FEATURED PRODUCTS -->
+    <div class="product-section" style="margin-top: 40px; margin-bottom: 40px;" id="products-section">
+        <h2 style="margin-bottom: 20px;">Fresh Products</h2>
+
+        <div class="product-grid">
+            {% for product in products %}
+            <div class="product-card">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                {% else %}
+                <div
+                    style="height: 150px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; border-radius: 4px; color: #999;">
+                    No Image</div>
+                {% endif %}
+                <h3>{{ product.name }}</h3>
+                <p style="margin-bottom: 5px;">{{ product.category.name }}</p>
+                <div class="price">₹{{ product.price }}</div>
+                {% if product.quantity > 0 %}
+                <a href="{% url 'add_to_cart' product.slug %}" class="btn-buy">Add</a>
+                {% else %}
+                <button class="btn-buy" disabled style="background:#ccc; cursor:not-allowed;">Out of Stock</button>
+                {% endif %}
+            </div>
+            {% empty %}
+            <p>No products available.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+>>>>>>> 66b6aa0 (added the checkout page)

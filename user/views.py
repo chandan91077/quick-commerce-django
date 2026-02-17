@@ -21,6 +21,11 @@ from .models import ContactMessage
 # ==================== PUBLIC VIEWS ====================
 
 
+<<<<<<< HEAD
+=======
+# ... (imports remain the same)
+
+>>>>>>> 66b6aa0 (added the checkout page)
 def home(request):
     """
     Display home page with featured products from approved vendors.
@@ -33,8 +38,13 @@ def home(request):
     try:
         from vendor.models import Product, Category
         
+<<<<<<< HEAD
         # Get category filter
         category_id = request.GET.get('category')
+=======
+        # Get category filter (now using slug)
+        category_slug = request.GET.get('category')
+>>>>>>> 66b6aa0 (added the checkout page)
         selected_category = None
         
         # Base query
@@ -48,9 +58,15 @@ def home(request):
         )
         
         # Apply filter if selected
+<<<<<<< HEAD
         if category_id:
             try:
                 selected_category = Category.objects.get(id=category_id)
+=======
+        if category_slug:
+            try:
+                selected_category = Category.objects.get(slug=category_slug)
+>>>>>>> 66b6aa0 (added the checkout page)
                 products = products.filter(category=selected_category)
             except Category.DoesNotExist:
                 pass
@@ -91,7 +107,12 @@ def home(request):
         for cat in categories:
             cat.image_url = category_images.get(cat.name, 'images/default_cat.png')
             
+<<<<<<< HEAD
         # Get special category IDs for banner cards
+=======
+        # Get special category IDs for banner cards (using slugs for URLs, but ID lookup is fine internally if needed, or switch to slug)
+        # Actually special_cats are used in home.html for links, so we should ideally use slugs there too if we update template
+>>>>>>> 66b6aa0 (added the checkout page)
         special_cats = {
             'pharma': Category.objects.filter(name__icontains='Pharma').first(),
             'pet': Category.objects.filter(name__icontains='Pet').first(),
@@ -117,14 +138,22 @@ def home(request):
     return render(request, 'home.html', context)
 
 
+<<<<<<< HEAD
 def category_products(request, category_id):
+=======
+def category_products(request, category_slug):
+>>>>>>> 66b6aa0 (added the checkout page)
     """
     Display all products for a specific category.
     """
     try:
         from vendor.models import Product, Category
         
+<<<<<<< HEAD
         category = Category.objects.get(id=category_id)
+=======
+        category = Category.objects.get(slug=category_slug)
+>>>>>>> 66b6aa0 (added the checkout page)
         
         products = Product.objects.filter(
             category=category,
@@ -495,3 +524,197 @@ Blinkit Team
         )
     except Exception as error:
         print(f"Error sending welcome email: {error}")
+<<<<<<< HEAD
+=======
+
+# ==================== CART VIEWS ====================
+
+@login_required(login_url='login')
+def add_to_cart(request, product_slug):
+    """
+    Add a product to the user's cart.
+    """
+    try:
+        from vendor.models import Product
+        from .models import Cart, CartItem
+        
+        product = Product.objects.get(slug=product_slug)
+        
+        if product.quantity < 1:
+            messages.error(request, 'Product is out of stock')
+            return redirect('home')
+        
+        cart, created = Cart.objects.get_or_create(user=request.user)
+        cart_item, item_created = CartItem.objects.get_or_create(cart=cart, product=product)
+        
+        if not item_created:
+            if cart_item.quantity + 1 > product.quantity:
+                 messages.warning(request, f'Only {product.quantity} items available in stock.')
+            else:
+                cart_item.quantity += 1
+                cart_item.save()
+                messages.success(request, 'Item quantity updated in cart')
+        else:
+            cart_item.quantity = 1
+            cart_item.save()
+            messages.success(request, 'Item added to cart')
+            
+        return redirect('view_cart')
+        
+    except Product.DoesNotExist:
+        messages.error(request, 'Product not found')
+        return redirect('home')
+    except Exception as e:
+        print(f"Error adding to cart: {e}")
+        messages.error(request, 'Error adding item to cart')
+        return redirect('home')
+
+
+@login_required(login_url='login')
+def view_cart(request):
+    """
+    Display the user's cart.
+    """
+    try:
+        from .models import Cart
+        cart, created = Cart.objects.get_or_create(user=request.user)
+        return render(request, 'cart.html', {'cart': cart})
+    except Exception as e:
+        print(f"Error viewing cart: {e}")
+        messages.error(request, 'Error loading cart')
+        return redirect('home')
+
+
+@login_required(login_url='login')
+def update_cart_item(request, item_id, action):
+    """
+    Update quantity of a cart item.
+    action: 'increment' or 'decrement'
+    """
+    try:
+        from .models import CartItem
+        cart_item = CartItem.objects.get(id=item_id, cart__user=request.user)
+        
+        if action == 'increment':
+            if cart_item.quantity + 1 > cart_item.product.quantity:
+                messages.warning(request, f'Only {cart_item.product.quantity} items available.')
+            else:
+                cart_item.quantity += 1
+                cart_item.save()
+        elif action == 'decrement':
+            if cart_item.quantity > 1:
+                cart_item.quantity -= 1
+                cart_item.save()
+            else:
+                cart_item.delete()
+        
+        return redirect('view_cart')
+        
+    except CartItem.DoesNotExist:
+        messages.error(request, 'Item not found in cart')
+        return redirect('view_cart')
+
+
+@login_required(login_url='login')
+def remove_from_cart(request, item_id):
+    """
+    Remove an item from the cart.
+    """
+    try:
+        from .models import CartItem
+        cart_item = CartItem.objects.get(id=item_id, cart__user=request.user)
+        cart_item.delete()
+        messages.success(request, 'Item removed from cart')
+        return redirect('view_cart')
+    except CartItem.DoesNotExist:
+        messages.error(request, 'Item not found')
+        return redirect('view_cart')
+
+
+@login_required(login_url='login')
+def checkout(request):
+    """
+    Display checkout page with order summary.
+    """
+    try:
+        from .models import Cart
+        cart = Cart.objects.get(user=request.user)
+        
+        if cart.items.count() == 0:
+            messages.warning(request, 'Your cart is empty')
+            return redirect('home')
+            
+        context = {
+            'cart': cart,
+            'user': request.user
+        }
+        return render(request, 'checkout.html', context)
+        
+    except Cart.DoesNotExist:
+        messages.warning(request, 'Your cart is empty')
+        return redirect('home')
+
+
+@login_required(login_url='login')
+def process_checkout(request):
+    """
+    Process the checkout form and create order.
+    """
+    if request.method != 'POST':
+        return redirect('checkout')
+        
+    try:
+        from vendor.models import Order, OrderItem
+        from .models import Cart
+        
+        cart = Cart.objects.get(user=request.user)
+        if cart.items.count() == 0:
+            return redirect('home')
+            
+        # Get form data
+        name = request.POST.get('name')
+        phone = request.POST.get('phone')
+        address = request.POST.get('address')
+        payment_method = request.POST.get('payment_method')
+        
+        if not all([name, phone, address, payment_method]):
+            messages.error(request, 'All fields are required')
+            return redirect('checkout')
+            
+        # Create Order
+        order = Order.objects.create(
+            user=request.user,
+            total_amount=cart.get_total_price(),
+            customer_name=name,
+            customer_phone=phone,
+            delivery_address=address,
+            payment_method=payment_method,
+            is_paid=(payment_method != 'cod') # Simplified for now
+        )
+        
+        # Create Order Items
+        for item in cart.items.all():
+            OrderItem.objects.create(
+                order=order,
+                product=item.product,
+                vendor=item.product.vendor,
+                quantity=item.quantity,
+                price=item.product.get_display_price(),
+                status='Pending'
+            )
+            
+            # Reduce stock
+            item.product.quantity -= item.quantity
+            item.product.save()
+            
+        # Clear Cart
+        cart.items.all().delete()
+        
+        messages.success(request, 'Order placed successfully!')
+        return redirect('user_orders')
+        
+    except Exception as e:
+        print(f"Checkout error: {e}")
+        messages.error(request, 'Error processing checkout')
+        return redirect('checkout')
+>>>>>>> 66b6aa0 (added the checkout page)

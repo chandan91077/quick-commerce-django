@@ -331,9 +331,15 @@ def product_list(request):
     products = vendor.products.select_related('category').order_by('-created_at')
     
     # Apply filters
+<<<<<<< HEAD
     category_id = request.GET.get('category')
     if category_id:
         products = products.filter(category_id=category_id)
+=======
+    category_slug = request.GET.get('category')
+    if category_slug:
+        products = products.filter(category__slug=category_slug)
+>>>>>>> 66b6aa0 (added the checkout page)
     
     availability = request.GET.get('availability')
     if availability == 'available':
@@ -389,14 +395,22 @@ def add_product(request):
 
 @login_required
 @vendor_required
+<<<<<<< HEAD
 def edit_product(request, product_id):
+=======
+def edit_product(request, product_slug):
+>>>>>>> 66b6aa0 (added the checkout page)
     """
     Edit existing product details.
     
     Only vendor who created product can edit.
     """
     vendor = request.user.vendor_profile
+<<<<<<< HEAD
     product = get_object_or_404(Product, id=product_id, vendor=vendor)
+=======
+    product = get_object_or_404(Product, slug=product_slug, vendor=vendor)
+>>>>>>> 66b6aa0 (added the checkout page)
     
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES, instance=product)
@@ -420,12 +434,20 @@ def edit_product(request, product_id):
 
 @login_required
 @vendor_required
+<<<<<<< HEAD
 def delete_product(request, product_id):
+=======
+def delete_product(request, product_slug):
+>>>>>>> 66b6aa0 (added the checkout page)
     """
     Delete product from catalog with confirmation.
     """
     vendor = request.user.vendor_profile
+<<<<<<< HEAD
     product = get_object_or_404(Product, id=product_id, vendor=vendor)
+=======
+    product = get_object_or_404(Product, slug=product_slug, vendor=vendor)
+>>>>>>> 66b6aa0 (added the checkout page)
     
     if request.method == 'POST':
         product_name = product.name
@@ -443,12 +465,20 @@ def delete_product(request, product_id):
 
 @login_required
 @vendor_required
+<<<<<<< HEAD
 def toggle_product_availability(request, product_id):
+=======
+def toggle_product_availability(request, product_slug):
+>>>>>>> 66b6aa0 (added the checkout page)
     """
     Toggle product between available and unavailable status.
     """
     vendor = request.user.vendor_profile
+<<<<<<< HEAD
     product = get_object_or_404(Product, id=product_id, vendor=vendor)
+=======
+    product = get_object_or_404(Product, slug=product_slug, vendor=vendor)
+>>>>>>> 66b6aa0 (added the checkout page)
     
     product.is_available = not product.is_available
     product.save()
@@ -584,8 +614,13 @@ def earnings_report(request):
     # Get filter parameters
     date_from = request.GET.get('date_from')
     date_to = request.GET.get('date_to')
+<<<<<<< HEAD
     product_id = request.GET.get('product')
     category_id = request.GET.get('category')
+=======
+    product_slug = request.GET.get('product')
+    category_slug = request.GET.get('category')
+>>>>>>> 66b6aa0 (added the checkout page)
     
     # Base queryset
     order_items = vendor.order_items.filter(
@@ -597,10 +632,17 @@ def earnings_report(request):
         order_items = order_items.filter(updated_at__date__gte=date_from)
     if date_to:
         order_items = order_items.filter(updated_at__date__lte=date_to)
+<<<<<<< HEAD
     if product_id:
         order_items = order_items.filter(product_id=product_id)
     if category_id:
         order_items = order_items.filter(product__category_id=category_id)
+=======
+    if product_slug:
+        order_items = order_items.filter(product__slug=product_slug)
+    if category_slug:
+        order_items = order_items.filter(product__category__slug=category_slug)
+>>>>>>> 66b6aa0 (added the checkout page)
     
     # Calculate totals
     total_revenue = order_items.aggregate(

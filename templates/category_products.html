@@ -6,8 +6,13 @@
     <!-- Sidebar -->
     <div class="category-sidebar">
         {% for cat in categories %}
+<<<<<<< HEAD
         <a href="{% url 'category_products' cat.id %}"
             class="sidebar-item {% if cat.id == category.id %}active{% endif %}">
+=======
+        <a href="{% url 'category_products' cat.slug %}"
+            class="sidebar-item {% if cat.slug == category.slug %}active{% endif %}">
+>>>>>>> 66b6aa0 (added the checkout page)
             <div class="sidebar-icon">
                 <img src="{% static cat.image_url %}" alt="{{ cat.name }}">
             </div>
@@ -53,7 +58,11 @@
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto;">
                     <div class="price">₹{{ product.price }}</div>
                     {% if product.quantity > 0 %}
+<<<<<<< HEAD
                     <a href="{% url 'place_order' product.id %}" class="btn-add">ADD</a>
+=======
+                    <a href="{% url 'add_to_cart' product.slug %}" class="btn-add">ADD</a>
+>>>>>>> 66b6aa0 (added the checkout page)
                     {% else %}
                     <button class="btn-add" disabled
                         style="background:#ccc; border-color:#ccc; color:white; cursor:not-allowed;">OUT</button>
