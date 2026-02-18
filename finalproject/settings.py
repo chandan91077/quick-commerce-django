@@ -70,10 +70,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "vendor.context_processors.user_vendor_status",
-<<<<<<< HEAD
-=======
                 "user.context_processors.cart_count",
->>>>>>> 66b6aa0 (added the checkout page)
             ],
         },
     },

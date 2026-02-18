@@ -2,16 +2,11 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
-<<<<<<< HEAD
-from decimal import Decimal
-import math
-=======
 from django.utils.text import slugify
 from django.urls import reverse
 from decimal import Decimal
 import math
 import uuid
->>>>>>> 66b6aa0 (added the checkout page)
 
 # TODO: Add more comprehensive error handling for distance calculations
 # VENDOR MODEL
@@ -29,10 +24,7 @@ class Vendor(models.Model):
     
     # Shop Details
     shop_name = models.CharField(max_length=200)
-<<<<<<< HEAD
-=======
     slug = models.SlugField(max_length=255, unique=True)
->>>>>>> 66b6aa0 (added the checkout page)
     owner_name = models.CharField(max_length=100)
     email = models.EmailField()
     phone = models.CharField(max_length=15)
@@ -41,7 +33,10 @@ class Vendor(models.Model):
     address = models.TextField()
     city = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
-    pincode = models.CharField(max_length=10)
+    pincode = models.CharField(
+        max_length=200,
+        help_text='Enter one or more 6-digit pincodes (comma separated)'
+    )
     latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     
@@ -70,16 +65,30 @@ class Vendor(models.Model):
         verbose_name = 'Vendor'
         verbose_name_plural = 'Vendors'
     
-<<<<<<< HEAD
-=======
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.shop_name)
         super(Vendor, self).save(*args, **kwargs)
 
->>>>>>> 66b6aa0 (added the checkout page)
     def __str__(self):
         return f"{self.shop_name} - {self.owner_name}"
+
+    def get_serviceable_pincodes(self):
+        """Return unique valid 6-digit pincodes configured for this vendor."""
+        if not self.pincode:
+            return []
+
+        import re
+
+        parts = re.findall(r'\d{6}', str(self.pincode))
+        normalized = []
+        seen = set()
+        for value in parts:
+            pin = value.strip()
+            if pin not in seen:
+                normalized.append(pin)
+                seen.add(pin)
+        return normalized
     
     def is_approved(self):
         """Check if vendor is approved"""
@@ -102,10 +111,7 @@ class Vendor(models.Model):
 class Category(models.Model):
     # Product categories
     name = models.CharField(max_length=100, unique=True)
-<<<<<<< HEAD
-=======
     slug = models.SlugField(max_length=150, unique=True)
->>>>>>> 66b6aa0 (added the checkout page)
     description = models.TextField(blank=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -115,11 +121,6 @@ class Category(models.Model):
         verbose_name = 'Category'
         verbose_name_plural = 'Categories'
     
-<<<<<<< HEAD
-    def __str__(self):
-        return self.name
-
-=======
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
@@ -130,8 +131,6 @@ class Category(models.Model):
 
     def get_absolute_url(self):
         return reverse('category_products', kwargs={'category_slug': self.slug})
-
->>>>>>> 66b6aa0 (added the checkout page)
 
 # ==================== PRODUCT MODEL ====================
 class Product(models.Model):
@@ -151,10 +150,7 @@ class Product(models.Model):
     
     # Product Details
     name = models.CharField(max_length=200)
-<<<<<<< HEAD
-=======
     slug = models.SlugField(max_length=255, unique=True)
->>>>>>> 66b6aa0 (added the checkout page)
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
     discount_price = models.DecimalField(
@@ -187,10 +183,6 @@ class Product(models.Model):
         verbose_name = 'Product'
         verbose_name_plural = 'Products'
     
-<<<<<<< HEAD
-    def __str__(self):
-        return f"{self.name} - {self.vendor.shop_name}"
-=======
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
@@ -201,7 +193,6 @@ class Product(models.Model):
 
     def get_absolute_url(self):
         return reverse('edit_product', kwargs={'product_slug': self.slug})
->>>>>>> 66b6aa0 (added the checkout page)
     
     def get_display_price(self):
         """Return discount price if available, otherwise regular price"""

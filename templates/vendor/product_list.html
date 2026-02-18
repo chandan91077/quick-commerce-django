@@ -16,16 +16,27 @@
     <div class="vendor-logo">
       <h1>blink<span>it</span></h1>
     </div>
-    <div class="vendor-nav">
-      <a href="{% url 'vendor_dashboard' %}"><i class="fas fa-chart-line"></i> Dashboard</a>
-      <a href="{% url 'product_list' %}"><i class="fas fa-box"></i> Products</a>
-      <a href="{% url 'vendor_orders' %}"><i class="fas fa-shopping-bag"></i> Orders</a>
-      <a href="{% url 'earnings_report' %}"><i class="fas fa-rupee-sign"></i> Earnings</a>
-      <a href="{% url 'vendor_profile' %}"><i class="fas fa-user-cog"></i> Profile</a>
-      <a href="{% url 'vendor_contact' %}"><i class="fas fa-envelope"></i> Contact</a>
-      <a href="{% url 'logout_vendor' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    <button class="vendor-mobile-toggle" id="vendor-mobile-toggle">
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="vendor-nav" id="vendor-nav">
+      <div class="vendor-nav-links">
+        <a href="{% url 'vendor_dashboard' %}"><i class="fas fa-chart-line"></i> Dashboard</a>
+        <a href="{% url 'product_list' %}"><i class="fas fa-box"></i> Products</a>
+        <a href="{% url 'vendor_orders' %}"><i class="fas fa-shopping-bag"></i> Orders</a>
+        <a href="{% url 'earnings_report' %}"><i class="fas fa-rupee-sign"></i> Earnings</a>
+        <a href="{% url 'vendor_profile' %}"><i class="fas fa-user-cog"></i> Profile</a>
+        <a href="{% url 'vendor_contact' %}"><i class="fas fa-envelope"></i> Contact</a>
+        <a href="{% url 'logout_vendor' %}" class="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </div>
     </div>
   </div>
+
+  <script>
+    document.getElementById('vendor-mobile-toggle').addEventListener('click', function () {
+      document.getElementById('vendor-nav').classList.toggle('active');
+    });
+  </script>
 
   <div class="container">
     <div class="page-header">
@@ -41,11 +52,7 @@
         <select onchange="window.location.href = '?category=' + this.value">
           <option value="">All Categories</option>
           {% for category in categories %}
-<<<<<<< HEAD
-          <option value="{{ category.id }}">{{ category.name }}</option>
-=======
           <option value="{{ category.slug }}">{{ category.name }}</option>
->>>>>>> 66b6aa0 (added the checkout page)
           {% endfor %}
         </select>
       </div>
@@ -79,12 +86,7 @@
         <div class="product-body">
           <div class="product-name">{{ product.name }}</div>
           <div class="product-category">
-<<<<<<< HEAD
-            <i class="fas fa-tag"></i> {{
-            product.category.name|default:"Uncategorized" }}
-=======
             <i class="fas fa-tag"></i> {{ product.category.name|default:"Uncategorized" }}
->>>>>>> 66b6aa0 (added the checkout page)
           </div>
           <div class="product-price">
             {% if product.discount_price %}
@@ -93,33 +95,21 @@
                   font-size: 14px;
                   color: #999;
                 ">₹{{ product.price }}</span>
-            ₹{{ product.discount_price }} {% else %} ₹{{ product.price }} {% endif %}
+            ₹{{ product.discount_price }} {% else %} ₹{{ product.price }} {%
+            endif %}
           </div>
           <div
             class="product-stock {% if product.quantity == 0 %}stock-out{% elif product.is_low_stock %}stock-low{% else %}stock-good{% endif %}">
-<<<<<<< HEAD
-            <i class="fas fa-box"></i> Stock: {{ product.quantity }} {{
-            product.unit }}
-=======
             <i class="fas fa-box"></i> Stock: {{ product.quantity }} {{ product.unit }} left
->>>>>>> 66b6aa0 (added the checkout page)
           </div>
           <div style="margin-bottom: 10px">
             <span
               class="status-badge {% if product.is_available %}badge-available{% else %}badge-unavailable{% endif %}">
-              {% if product.is_available %}Available{% else %}Unavailable{% endif %}
+              {% if product.is_available %} Available {% else %} Unavailable
+              {% endif %}
             </span>
           </div>
           <div class="product-actions">
-<<<<<<< HEAD
-            <a href="{% url 'edit_product' product.id %}" class="btn btn-edit">
-              <i class="fas fa-edit"></i> Edit
-            </a>
-            <a href="{% url 'toggle_product_availability' product.id %}" class="btn btn-toggle">
-              <i class="fas fa-toggle-on"></i> Toggle
-            </a>
-            <a href="{% url 'delete_product' product.id %}" class="btn btn-delete"
-=======
             <a href="{% url 'edit_product' product.slug %}" class="btn btn-edit">
               <i class="fas fa-edit"></i> Edit
             </a>
@@ -127,7 +117,6 @@
               <i class="fas fa-toggle-on"></i> Toggle
             </a>
             <a href="{% url 'delete_product' product.slug %}" class="btn btn-delete"
->>>>>>> 66b6aa0 (added the checkout page)
               onclick="return confirm('Delete this product?');">
               <i class="fas fa-trash"></i>
             </a>

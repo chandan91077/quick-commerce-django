@@ -45,7 +45,7 @@ class VendorSignupForm(forms.ModelForm):
             'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Full Address'}),
             'city': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'City'}),
             'state': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'State'}),
-            'pincode': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Pincode'}),
+            'pincode': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. 560001, 560034'}),
             'latitude': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '28.7041', 'step': '0.000001'}),
             'longitude': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '77.1025', 'step': '0.000001'}),
             'delivery_radius': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '5.0', 'step': '0.5'}),
@@ -64,6 +64,25 @@ class VendorSignupForm(forms.ModelForm):
         if Vendor.objects.filter(email=email).exists():
             raise ValidationError('Email already registered as vendor')
         return email
+
+    def clean_pincode(self):
+        raw_value = self.cleaned_data.get('pincode', '')
+        digit_chunks = re.findall(r'\d+', raw_value)
+        pins = []
+        seen = set()
+
+        for chunk in digit_chunks:
+            if len(chunk) != 6:
+                raise ValidationError('Each pincode must be exactly 6 digits.')
+            pin = chunk
+            if pin not in seen:
+                pins.append(pin)
+                seen.add(pin)
+
+        if not pins:
+            raise ValidationError('Please enter at least one valid 6-digit pincode.')
+
+        return ', '.join(pins)
     
     def clean(self):
         cleaned_data = super().clean()
@@ -116,13 +135,32 @@ class VendorProfileForm(forms.ModelForm):
             'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'city': forms.TextInput(attrs={'class': 'form-control'}),
             'state': forms.TextInput(attrs={'class': 'form-control'}),
-            'pincode': forms.TextInput(attrs={'class': 'form-control'}),
+            'pincode': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. 560001, 560034'}),
             'latitude': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.000001'}),
             'longitude': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.000001'}),
             'delivery_radius': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.5'}),
             'shop_logo': forms.FileInput(attrs={'class': 'form-control'}),
             'shop_banner': forms.FileInput(attrs={'class': 'form-control'}),
         }
+
+    def clean_pincode(self):
+        raw_value = self.cleaned_data.get('pincode', '')
+        digit_chunks = re.findall(r'\d+', raw_value)
+        pins = []
+        seen = set()
+
+        for chunk in digit_chunks:
+            if len(chunk) != 6:
+                raise ValidationError('Each pincode must be exactly 6 digits.')
+            pin = chunk
+            if pin not in seen:
+                pins.append(pin)
+                seen.add(pin)
+
+        if not pins:
+            raise ValidationError('Please enter at least one valid 6-digit pincode.')
+
+        return ', '.join(pins)
 
 
 # PRODUCT FORM

@@ -18,15 +18,9 @@ urlpatterns = [
     # Product Management
     path('products/', views.product_list, name='product_list'),
     path('products/add/', views.add_product, name='add_product'),
-<<<<<<< HEAD
-    path('products/<int:product_id>/edit/', views.edit_product, name='edit_product'),
-    path('products/<int:product_id>/delete/', views.delete_product, name='delete_product'),
-    path('products/<int:product_id>/toggle/', views.toggle_product_availability, name='toggle_product_availability'),
-=======
     path('products/<slug:product_slug>/edit/', views.edit_product, name='edit_product'),
     path('products/<slug:product_slug>/delete/', views.delete_product, name='delete_product'),
     path('products/<slug:product_slug>/toggle/', views.toggle_product_availability, name='toggle_product_availability'),
->>>>>>> 66b6aa0 (added the checkout page)
     
     # Order Management
     path('orders/', views.vendor_orders, name='vendor_orders'),

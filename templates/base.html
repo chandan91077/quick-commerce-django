@@ -4,7 +4,7 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>{% block title %}Blinkit - Vendor Panel{% endblock %}</title>
 
   <!-- Bootstrap CSS -->
@@ -77,32 +77,29 @@
   </style>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const floatingContact = document.getElementById('floating-contact');
+    document.addEventListener("DOMContentLoaded", function () {
+      const floatingContact = document.getElementById("floating-contact");
 
       function checkScroll() {
         if (window.scrollY > 100) {
-          floatingContact.classList.add('visible');
+          floatingContact.classList.add("visible");
         } else {
-          floatingContact.classList.remove('visible');
+          floatingContact.classList.remove("visible");
         }
       }
 
-      window.addEventListener('scroll', checkScroll);
+      window.addEventListener("scroll", checkScroll);
       // Run once on load in case we start scrolled down
       checkScroll();
-<<<<<<< HEAD
-=======
 
       // Auto-dismiss alerts after 5 seconds
-      var alerts = document.querySelectorAll('.alert');
+      var alerts = document.querySelectorAll(".alert");
       alerts.forEach(function (alert) {
         setTimeout(function () {
           var bsAlert = new bootstrap.Alert(alert);
           bsAlert.close();
         }, 5000);
       });
->>>>>>> 66b6aa0 (added the checkout page)
     });
   </script>
 </body>

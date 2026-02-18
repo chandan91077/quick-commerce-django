@@ -14,18 +14,63 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+import re
 
-from .models import ContactMessage
+from .models import ContactMessage, UserProfile
+
+
+def _extract_pincode(address):
+    """Extract first 6-digit pincode from address text."""
+    if not address:
+        return None
+    match = re.search(r'\b\d{6}\b', address)
+    return match.group(0) if match else None
+
+
+def _parse_pincode_list(raw_value):
+    """Parse comma/space separated pincode text into unique valid 6-digit pincodes."""
+    if not raw_value:
+        return set()
+
+    return set(re.findall(r'\d{6}', str(raw_value)))
+
+
+def _is_any_vendor_available_for_pincode(pincode):
+    """Check whether any approved vendor serves the provided pincode."""
+    if not pincode:
+        return False
+
+    from vendor.models import Vendor
+
+    for vendor_pincode in Vendor.objects.filter(status='approved').values_list('pincode', flat=True):
+        if pincode in _parse_pincode_list(vendor_pincode):
+            return True
+    return False
+
+
+def _is_cart_deliverable_for_pincode(cart, pincode):
+    """Return True if all cart items are deliverable for the given pincode."""
+    if not pincode:
+        return False
+
+    items = cart.items.select_related('product__vendor')
+    total_items = items.count()
+    if total_items == 0:
+        return False
+
+    for item in items:
+        vendor = item.product.vendor
+        if vendor.status != 'approved':
+            return False
+        if pincode not in _parse_pincode_list(vendor.pincode):
+            return False
+
+    return True
 
 
 # ==================== PUBLIC VIEWS ====================
 
 
-<<<<<<< HEAD
-=======
-# ... (imports remain the same)
-
->>>>>>> 66b6aa0 (added the checkout page)
 def home(request):
     """
     Display home page with featured products from approved vendors.
@@ -38,13 +83,8 @@ def home(request):
     try:
         from vendor.models import Product, Category
         
-<<<<<<< HEAD
-        # Get category filter
-        category_id = request.GET.get('category')
-=======
         # Get category filter (now using slug)
         category_slug = request.GET.get('category')
->>>>>>> 66b6aa0 (added the checkout page)
         selected_category = None
         
         # Base query
@@ -58,15 +98,9 @@ def home(request):
         )
         
         # Apply filter if selected
-<<<<<<< HEAD
-        if category_id:
-            try:
-                selected_category = Category.objects.get(id=category_id)
-=======
         if category_slug:
             try:
                 selected_category = Category.objects.get(slug=category_slug)
->>>>>>> 66b6aa0 (added the checkout page)
                 products = products.filter(category=selected_category)
             except Category.DoesNotExist:
                 pass
@@ -107,12 +141,7 @@ def home(request):
         for cat in categories:
             cat.image_url = category_images.get(cat.name, 'images/default_cat.png')
             
-<<<<<<< HEAD
         # Get special category IDs for banner cards
-=======
-        # Get special category IDs for banner cards (using slugs for URLs, but ID lookup is fine internally if needed, or switch to slug)
-        # Actually special_cats are used in home.html for links, so we should ideally use slugs there too if we update template
->>>>>>> 66b6aa0 (added the checkout page)
         special_cats = {
             'pharma': Category.objects.filter(name__icontains='Pharma').first(),
             'pet': Category.objects.filter(name__icontains='Pet').first(),
@@ -138,22 +167,14 @@ def home(request):
     return render(request, 'home.html', context)
 
 
-<<<<<<< HEAD
-def category_products(request, category_id):
-=======
 def category_products(request, category_slug):
->>>>>>> 66b6aa0 (added the checkout page)
     """
     Display all products for a specific category.
     """
     try:
         from vendor.models import Product, Category
         
-<<<<<<< HEAD
-        category = Category.objects.get(id=category_id)
-=======
         category = Category.objects.get(slug=category_slug)
->>>>>>> 66b6aa0 (added the checkout page)
         
         products = Product.objects.filter(
             category=category,
@@ -210,6 +231,53 @@ def category_products(request, category_slug):
         print(f"Error loading category products: {error}")
         messages.error(request, 'Error loading products')
         return redirect('home')
+
+
+def set_delivery_pincode(request):
+    """Store delivery pincode in session and show availability status."""
+    if request.method != 'POST':
+        return redirect('home')
+
+    pincode = request.POST.get('delivery_pincode', '').strip()
+
+    if not pincode:
+        request.session.pop('delivery_pincode', None)
+        messages.info(request, 'Delivery pincode cleared.')
+        return redirect(request.META.get('HTTP_REFERER', 'home'))
+
+    if not pincode.isdigit() or len(pincode) != 6:
+        messages.error(request, 'Please enter a valid 6-digit pincode.')
+        return redirect(request.META.get('HTTP_REFERER', 'home'))
+
+    request.session['delivery_pincode'] = pincode
+    delivery_available = _is_any_vendor_available_for_pincode(pincode)
+
+    if delivery_available:
+        messages.success(request, f'Delivery is available for pincode {pincode}.')
+    else:
+        messages.error(request, f'Delivery is unavailable for pincode {pincode}.')
+
+    return redirect(request.META.get('HTTP_REFERER', 'home'))
+
+
+def check_delivery_pincode(request):
+    """AJAX endpoint to check delivery availability for a pincode."""
+    from django.http import JsonResponse
+    pincode = request.GET.get('pincode', '').strip()
+    
+    if not pincode or not pincode.isdigit() or len(pincode) != 6:
+        return JsonResponse({
+            'available': False,
+            'message': 'Invalid pincode format'
+        })
+
+    available = _is_any_vendor_available_for_pincode(pincode)
+    
+    return JsonResponse({
+        'available': available,
+        'pincode': pincode,
+        'message': f"Delivery {'available' if available else 'unavailable'} for {pincode}"
+    })
 
 
 def contact_us(request, source='user'):
@@ -307,6 +375,8 @@ def register_view(request):
                 email=email,
                 password=password
             )
+
+            UserProfile.objects.get_or_create(user=user)
             
             # Send welcome email
             _send_welcome_email(username, email)
@@ -524,8 +594,6 @@ Blinkit Team
         )
     except Exception as error:
         print(f"Error sending welcome email: {error}")
-<<<<<<< HEAD
-=======
 
 # ==================== CART VIEWS ====================
 
@@ -638,15 +706,50 @@ def checkout(request):
     """
     try:
         from .models import Cart
+        from vendor.models import Order
         cart = Cart.objects.get(user=request.user)
+        profile, _ = UserProfile.objects.get_or_create(user=request.user)
         
         if cart.items.count() == 0:
             messages.warning(request, 'Your cart is empty')
             return redirect('home')
+
+        vendor_delivery_rows = list(
+            cart.items.values_list('product__vendor__pincode', 'product__vendor__status')
+        )
+        required_delivery_pincodes = []
+
+        if vendor_delivery_rows:
+            all_approved = all(status == 'approved' for _, status in vendor_delivery_rows)
+            vendor_pincode_sets = []
+            for pin, _ in vendor_delivery_rows:
+                parsed_pins = _parse_pincode_list(pin)
+                if parsed_pins:
+                    vendor_pincode_sets.append(parsed_pins)
+
+            if all_approved and vendor_pincode_sets:
+                common_pincodes = set.intersection(*vendor_pincode_sets)
+                required_delivery_pincodes = sorted(common_pincodes)
+
+        last_order = Order.objects.filter(user=request.user).order_by('-created_at').first()
+
+        initial_name = request.user.get_full_name() or request.user.username
+        initial_phone = profile.phone or (last_order.customer_phone if last_order else '')
+        initial_address = profile.delivery_address or (last_order.delivery_address if last_order else '')
+        initial_pincode = _extract_pincode(initial_address)
+        initial_address_available = _is_cart_deliverable_for_pincode(cart, initial_pincode) if initial_pincode else None
+        can_place_order = bool(initial_address_available and required_delivery_pincodes)
             
         context = {
             'cart': cart,
-            'user': request.user
+            'user': request.user,
+            'initial_name': initial_name,
+            'initial_phone': initial_phone,
+            'initial_address': initial_address,
+            'initial_address_available': initial_address_available,
+            'required_delivery_pincodes': required_delivery_pincodes,
+            'required_delivery_pincodes_text': ', '.join(required_delivery_pincodes),
+            'can_place_order': can_place_order,
         }
         return render(request, 'checkout.html', context)
         
@@ -680,6 +783,22 @@ def process_checkout(request):
         if not all([name, phone, address, payment_method]):
             messages.error(request, 'All fields are required')
             return redirect('checkout')
+
+        delivery_pincode = _extract_pincode(address)
+        if not delivery_pincode:
+            messages.error(request, 'Please include a valid 6-digit pincode in delivery address.')
+            return redirect('checkout')
+
+        if not _is_cart_deliverable_for_pincode(cart, delivery_pincode):
+            messages.error(request, f'Unavailable at this address ({delivery_pincode}).')
+            return redirect('checkout')
+
+        request.session['delivery_pincode'] = delivery_pincode
+
+        profile, _ = UserProfile.objects.get_or_create(user=request.user)
+        profile.phone = phone.strip()
+        profile.delivery_address = address.strip()
+        profile.save(update_fields=['phone', 'delivery_address'])
             
         # Create Order
         order = Order.objects.create(
@@ -717,4 +836,3 @@ def process_checkout(request):
         print(f"Checkout error: {e}")
         messages.error(request, 'Error processing checkout')
         return redirect('checkout')
->>>>>>> 66b6aa0 (added the checkout page)

@@ -1,19 +1,44 @@
-{% load static %}
-
 <!-- HEADER -->
 <header class="header">
   <div class="container-fluid">
     <div class="header-content">
+      <!-- MOBILE MENU TOGGLE -->
+      <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+        <i class="fas fa-bars"></i>
+      </button>
+
       <!-- LEFT : LOGO & LOCATION -->
       <div class="header-left">
-        <a href="{% url 'home' %}" style="text-decoration: none;">
-          <h1 class="logo">blink<span style="color: #0c831f;">it</span></h1>
+        <a href="{% url 'home' %}" style="text-decoration: none">
+          <h1 class="logo">blink<span style="color: #0c831f">it</span></h1>
         </a>
 
-        <div class="location-box">
+        <div class="location-box d-none d-md-flex">
           <div class="delivery-title">Delivery in 8 minutes</div>
           <div class="location-select">
-            B62, Pocket B, South City I, Sector 41 <i class="fas fa-caret-down"></i>
+            <div class="location-input-group">
+              <i class="fas fa-map-marker-alt location-icon"></i>
+              <form action="{% url 'set_delivery_pincode' %}" method="post" class="pincode-form"
+                id="header-pincode-form">
+                {% csrf_token %}
+                <input type="text" name="delivery_pincode" id="header_delivery_pincode" value="{{ delivery_pincode }}"
+                  maxlength="6" class="pincode-input" placeholder="Enter PIN" autocomplete="off" />
+                <button type="submit" class="pincode-btn">Check</button>
+              </form>
+            </div>
+            <div id="pincode-status-badge"
+              class="delivery-status-badge {% if delivery_checked %}{% if delivery_available %}available{% else %}unavailable{% endif %}{% else %}hidden{% endif %}">
+              <span class="status-dot"></span>
+              <span class="status-text">
+                {% if delivery_checked %}
+                {% if delivery_available %}
+                Available in {{ delivery_pincode }}
+                {% else %}
+                Not Available here
+                {% endif %}
+                {% endif %}
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -30,9 +55,8 @@
       <div class="header-right">
         {% if user.is_authenticated %}
         <div class="dropdown">
-          <button class="account-btn">
-            Account
-          </button>
+          <button class="account-btn"><i class="fas fa-user-circle d-md-none" style="font-size: 24px;"></i> <span
+              class="d-none d-md-inline">Account</span></button>
           <div class="dropdown-content">
             <div class="dropdown-header">
               <h3>My Account</h3>
@@ -58,24 +82,90 @@
         <a href="{% url 'login' %}" class="login-link">Login</a>
         {% endif %}
 
-<<<<<<< HEAD
-        <button class="cart-btn">
+        <a href="{% url 'view_cart' %}" class="cart-btn" style="text-decoration: none">
           <i class="fas fa-shopping-cart"></i>
-          <span style="margin-left: 5px; font-weight: 600;">My Cart</span>
-        </button>
-=======
-        <a href="{% url 'view_cart' %}" class="cart-btn" style="text-decoration: none;">
-          <i class="fas fa-shopping-cart"></i>
-          <span style="margin-left: 5px; font-weight: 600;">My Cart</span>
+          <span class="d-none d-md-inline" style="margin-left: 5px; font-weight: 600">My Cart</span>
           {% if cart_count > 0 %}
-          <span class="badge bg-danger ms-2 rounded-pill">{{ cart_count }}</span>
+          <span class="badge bg-danger ms-1 ms-md-2 rounded-pill">{{ cart_count }}</span>
           {% endif %}
         </a>
->>>>>>> 66b6aa0 (added the checkout page)
+      </div>
+    </div>
+
+    <!-- MOBILE LOCATION (Shown only on mobile) -->
+    <div class="mobile-location d-md-none mt-2">
+      <div class="location-select">
+        <div class="location-input-group">
+          <i class="fas fa-map-marker-alt location-icon"></i>
+          <form action="{% url 'set_delivery_pincode' %}" method="post" class="pincode-form w-100">
+            {% csrf_token %}
+            <input type="text" name="delivery_pincode" value="{{ delivery_pincode }}" maxlength="6"
+              class="pincode-input flex-grow-1" placeholder="Enter PIN code" autocomplete="off" />
+            <button type="submit" class="pincode-btn">Check</button>
+          </form>
+        </div>
       </div>
     </div>
   </div>
 </header>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const pincodeInput = document.getElementById("header_delivery_pincode");
+    const statusBadge = document.getElementById("pincode-status-badge");
+    const mobileToggle = document.getElementById("mobile-menu-toggle");
+
+    // Skip pincode logic if elements are missing
+    if (pincodeInput && statusBadge) {
+      const statusText = statusBadge.querySelector(".status-text");
+      const hintElement = document.getElementById("pincode-hint");
+
+      pincodeInput.addEventListener("input", function () {
+        const pincode = this.value.trim();
+        if (pincode.length < 6) {
+          statusBadge.classList.add("hidden");
+          if (hintElement) hintElement.style.display = "block";
+          return;
+        }
+        if (pincode.length === 6 && /^\d{6}$/.test(pincode)) {
+          checkPincode(pincode);
+        }
+      });
+
+      function checkPincode(pincode) {
+        statusBadge.classList.remove("hidden", "available", "unavailable");
+        statusBadge.classList.add("checking");
+        statusText.textContent = "Checking...";
+        if (hintElement) hintElement.style.display = "none";
+
+        fetch(`/check-pincode/?pincode=${pincode}`)
+          .then((response) => response.json())
+          .then((data) => {
+            statusBadge.classList.remove("checking");
+            if (data.available) {
+              statusBadge.classList.add("available");
+              statusText.textContent = `Available in ${pincode}`;
+            } else {
+              statusBadge.classList.add("unavailable");
+              statusText.textContent = "Not Available here";
+            }
+          })
+          .catch((err) => {
+            console.error("Error checking pincode:", err);
+            statusBadge.classList.add("hidden");
+          });
+      }
+    }
+
+    if (mobileToggle) {
+      mobileToggle.addEventListener('click', function () {
+        // Here we could toggle a side menu, for now let's just show an example
+        // Or if we want to handle account dropdown click for mobile
+      });
+    }
+  });
+</script>
+
 
 <style>
   .header {
@@ -84,12 +174,12 @@
     position: sticky;
     top: 0;
     z-index: 1000;
-    padding: 15px 0;
+    padding: 10px 0;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
   }
 
   .container-fluid {
-    padding: 0 40px;
+    padding: 0 20px;
     max-width: 1400px;
     margin: 0 auto;
   }
@@ -98,25 +188,33 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 30px;
+    gap: 15px;
+  }
+
+  .mobile-menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #333;
+    cursor: pointer;
+    padding: 5px;
   }
 
   /* Left Side */
   .header-left {
     display: flex;
     align-items: center;
-    gap: 30px;
-    min-width: 350px;
+    gap: 20px;
   }
 
   .logo {
-    font-size: 28px;
+    font-size: 24px;
     font-weight: 800;
-    color: #fce300;
-    /* Use Blinkit yellow if wanted, or black */
     color: #333;
     margin: 0;
     letter-spacing: -1px;
+    white-space: nowrap;
   }
 
   .logo span {
@@ -130,20 +228,104 @@
   }
 
   .delivery-title {
-    font-size: 18px;
+    font-size: 14px;
     font-weight: 800;
     color: #333;
     line-height: 1.2;
   }
 
   .location-select {
-    font-size: 13px;
+    font-size: 12px;
     color: #666;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .location-input-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fdfdfd;
+    padding: 2px 0;
+  }
+
+  .location-icon {
+    color: #0c831f;
+    font-size: 14px;
+  }
+
+  .pincode-form {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+
+  .pincode-input {
+    width: 80px;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-weight: 600;
+    outline: none;
+    background: #f9f9f9;
+  }
+
+  .pincode-input:focus {
+    border-color: #0c831f;
+    background: white;
+  }
+
+  .pincode-btn {
+    border: none;
+    background: #0c831f;
+    color: white;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 600;
     cursor: pointer;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 200px;
+  }
+
+  .delivery-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 600;
+  }
+
+  .delivery-status-badge.hidden {
+    display: none;
+  }
+
+  .available {
+    background: #e6f4ea;
+    color: #0c831f;
+  }
+
+  .unavailable {
+    background: #fdecea;
+    color: #d32f2f;
+  }
+
+  .checking {
+    background: #f0f0f0;
+    color: #666;
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .available .status-dot {
+    background: #0c831f;
   }
 
   /* Search */
@@ -157,23 +339,16 @@
     background: #f8f8f8;
     border: 1px solid #f0f0f0;
     border-radius: 8px;
-    height: 45px;
+    height: 40px;
     display: flex;
     align-items: center;
-    padding: 0 15px;
-    transition: border 0.2s;
-  }
-
-  .search-container:focus-within {
-    border-color: #e0e0e0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    background: white;
+    padding: 0 12px;
   }
 
   .search-icon {
     color: #999;
-    font-size: 18px;
-    margin-right: 12px;
+    font-size: 16px;
+    margin-right: 10px;
   }
 
   .search-container input {
@@ -183,55 +358,48 @@
     height: 100%;
     outline: none;
     font-size: 14px;
-    color: #333;
   }
 
   /* Right Side */
   .header-right {
     display: flex;
     align-items: center;
-    gap: 20px;
-    min-width: 200px;
+    gap: 15px;
     justify-content: flex-end;
   }
 
   .login-link {
-    font-size: 16px;
+    font-size: 14px;
     color: #333;
     text-decoration: none;
-    font-weight: 500;
+    font-weight: 600;
   }
 
   .cart-btn {
     background-color: #0c831f;
     color: white;
-    border: none;
-    padding: 12px 20px;
+    padding: 8px 15px;
     border-radius: 8px;
     font-size: 14px;
-    cursor: pointer;
     display: flex;
     align-items: center;
-    transition: background 0.2s;
-  }
-
-  .cart-btn:hover {
-    background-color: #096b19;
   }
 
   .account-btn {
     background: none;
     border: none;
-    font-size: 16px;
+    font-size: 14px;
     color: #333;
-    font-weight: 400;
+    font-weight: 600;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
   }
 
   /* Dropdown */
   .dropdown {
     position: relative;
-    display: inline-block;
   }
 
   .dropdown-content {
@@ -239,7 +407,7 @@
     position: absolute;
     right: 0;
     background-color: white;
-    min-width: 220px;
+    min-width: 200px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
     z-index: 1001;
     border-radius: 8px;
@@ -252,38 +420,90 @@
   }
 
   .dropdown-header {
-    padding: 10px 20px;
+    padding: 10px 15px;
   }
 
   .dropdown-header h3 {
     margin: 0;
-    font-size: 16px;
-    font-weight: 600;
-  }
-
-  .dropdown-header p {
-    margin: 0;
-    font-size: 13px;
-    color: #666;
+    font-size: 14px;
   }
 
   .dropdown-content a {
     color: #333;
-    padding: 10px 20px;
+    padding: 8px 15px;
     text-decoration: none;
     display: block;
-    font-size: 14px;
-    transition: background 0.2s;
+    font-size: 13px;
   }
 
-  .dropdown-content a:hover {
-    background-color: #f9f9f9;
-    color: #0c831f;
+  /* Responsive Queries */
+  @media (max-width: 768px) {
+    .header {
+      padding: 8px 0;
+      overflow-x: hidden;
+    }
+
+    .container-fluid {
+      padding: 0 10px;
+    }
+
+    .header-content {
+      display: grid;
+      grid-template-columns: 40px 1fr auto;
+      align-items: center;
+      gap: 5px;
+      width: 100%;
+    }
+
+    .mobile-menu-toggle {
+      display: block;
+      grid-column: 1;
+      justify-self: start;
+    }
+
+    .header-left {
+      grid-column: 2;
+      justify-self: start;
+      overflow: hidden;
+    }
+
+    .header-right {
+      grid-column: 3;
+      gap: 8px;
+      justify-self: end;
+    }
+
+    .header-search {
+      grid-column: 1 / span 3;
+      margin: 8px 0 0 0;
+      max-width: none;
+      display: block !important;
+      width: 100%;
+    }
+
+    .logo {
+      font-size: 18px;
+      letter-spacing: -0.5px;
+    }
+
+    .cart-btn {
+      padding: 6px 8px;
+      font-size: 12px;
+    }
   }
 
-  hr {
-    margin: 5px 0;
-    border: 0;
-    border-top: 1px solid #eee;
+  @media (max-width: 480px) {
+    .header-left .delivery-title {
+      display: none;
+    }
+
+    .logo {
+      font-size: 16px;
+    }
+
+    .pincode-input {
+      width: 55px;
+      font-size: 10px;
+    }
   }
 </style>

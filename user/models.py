@@ -8,6 +8,8 @@ import uuid
 class UserProfile(models.Model):
     # user profile extension
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    phone = models.CharField(max_length=15, blank=True, default='')
+    delivery_address = models.TextField(blank=True, default='')
 
     def __str__(self):
         return f"{self.user.username}"
@@ -32,8 +34,6 @@ class ContactMessage(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.subject}"
-<<<<<<< HEAD
-=======
 
 
 class Cart(models.Model):
@@ -61,4 +61,3 @@ class CartItem(models.Model):
     
     def get_total_price(self):
         return self.product.get_display_price() * self.quantity
->>>>>>> 66b6aa0 (added the checkout page)

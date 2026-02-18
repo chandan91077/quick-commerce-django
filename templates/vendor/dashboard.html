@@ -1,204 +1,192 @@
 {% load static %}
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vendor Dashboard - Blinkit</title>
-    <link rel="stylesheet" href="{% static 'home.css' %}" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-    />
-    <link rel="stylesheet" href="{% static 'vendor/vendor.css' %}" />
-  </head>
 
-  <body>
-    <!-- Vendor Header -->
-    <div class="vendor-header">
-      <div class="vendor-logo">
-        <h1>blink<span>it</span></h1>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vendor Dashboard - Blinkit</title>
+  <link rel="stylesheet" href="{% static 'home.css' %}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <link rel="stylesheet" href="{% static 'vendor/vendor.css' %}" />
+</head>
+
+<body>
+  <!-- Vendor Header -->
+  <div class="vendor-header">
+    <div class="vendor-logo">
+      <h1>blink<span>it</span></h1>
+    </div>
+    <button class="vendor-mobile-toggle" id="vendor-mobile-toggle">
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="vendor-nav" id="vendor-nav">
+      <div class="vendor-nav-links">
+        <a href="{% url 'vendor_dashboard' %}"><i class="fas fa-chart-line"></i> Dashboard</a>
+        <a href="{% url 'product_list' %}"><i class="fas fa-box"></i> Products</a>
+        <a href="{% url 'vendor_orders' %}"><i class="fas fa-shopping-bag"></i> Orders</a>
+        <a href="{% url 'earnings_report' %}"><i class="fas fa-rupee-sign"></i> Earnings</a>
+        <a href="{% url 'vendor_profile' %}"><i class="fas fa-user-cog"></i> Profile</a>
+        <a href="{% url 'vendor_contact' %}"><i class="fas fa-envelope"></i> Contact</a>
+        <a href="{% url 'logout_vendor' %}" class="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
       </div>
-      <div class="vendor-nav">
-        <a href="{% url 'vendor_dashboard' %}"
-          ><i class="fas fa-chart-line"></i> Dashboard</a
-        >
-        <a href="{% url 'product_list' %}"
-          ><i class="fas fa-box"></i> Products</a
-        >
-        <a href="{% url 'vendor_orders' %}"
-          ><i class="fas fa-shopping-bag"></i> Orders</a
-        >
-        <a href="{% url 'earnings_report' %}"
-          ><i class="fas fa-rupee-sign"></i> Earnings</a
-        >
-        <a href="{% url 'vendor_profile' %}"
-          ><i class="fas fa-user-cog"></i> Profile</a
-        >
-        <a href="{% url 'vendor_contact' %}"
-          ><i class="fas fa-envelope"></i> Contact</a
-        >
-        <span class="shop-name"
-          ><i class="fas fa-store"></i> {{ vendor.shop_name }}</span
-        >
-        <a href="{% url 'logout_vendor' %}"
-          ><i class="fas fa-sign-out-alt"></i> Logout</a
-        >
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('vendor-mobile-toggle').addEventListener('click', function () {
+      document.getElementById('vendor-nav').classList.toggle('active');
+    });
+  </script>
+
+  <!-- Main Dashboard -->
+  <div class="dashboard-container">
+    <h1 class="page-title">Dashboard Overview</h1>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-header">
+          <div>
+            <div class="stat-value">{{ total_products }}</div>
+            <div class="stat-label">Total Products</div>
+          </div>
+          <div class="stat-icon green">
+            <i class="fas fa-box"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <div>
+            <div class="stat-value">{{ active_products }}</div>
+            <div class="stat-label">Active Products</div>
+          </div>
+          <div class="stat-icon blue">
+            <i class="fas fa-check-circle"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <div>
+            <div class="stat-value">{{ total_orders }}</div>
+            <div class="stat-label">Total Orders</div>
+          </div>
+          <div class="stat-icon purple">
+            <i class="fas fa-shopping-cart"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <div>
+            <div class="stat-value">{{ pending_orders }}</div>
+            <div class="stat-label">Pending Orders</div>
+          </div>
+          <div class="stat-icon orange">
+            <i class="fas fa-clock"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <div>
+            <div class="stat-value">₹{{ total_revenue|floatformat:2 }}</div>
+            <div class="stat-label">Total Revenue</div>
+          </div>
+          <div class="stat-icon green">
+            <i class="fas fa-rupee-sign"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <div>
+            <div class="stat-value">₹{{ today_revenue|floatformat:2 }}</div>
+            <div class="stat-label">Today's Revenue</div>
+          </div>
+          <div class="stat-icon teal">
+            <i class="fas fa-calendar-day"></i>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Main Dashboard -->
-    <div class="dashboard-container">
-      <h1 class="page-title">Dashboard Overview</h1>
-
-      <!-- Stats Grid -->
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-header">
-            <div>
-              <div class="stat-value">{{ total_products }}</div>
-              <div class="stat-label">Total Products</div>
-            </div>
-            <div class="stat-icon green">
-              <i class="fas fa-box"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-header">
-            <div>
-              <div class="stat-value">{{ active_products }}</div>
-              <div class="stat-label">Active Products</div>
-            </div>
-            <div class="stat-icon blue">
-              <i class="fas fa-check-circle"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-header">
-            <div>
-              <div class="stat-value">{{ total_orders }}</div>
-              <div class="stat-label">Total Orders</div>
-            </div>
-            <div class="stat-icon purple">
-              <i class="fas fa-shopping-cart"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-header">
-            <div>
-              <div class="stat-value">{{ pending_orders }}</div>
-              <div class="stat-label">Pending Orders</div>
-            </div>
-            <div class="stat-icon orange">
-              <i class="fas fa-clock"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-header">
-            <div>
-              <div class="stat-value">₹{{ total_revenue|floatformat:2 }}</div>
-              <div class="stat-label">Total Revenue</div>
-            </div>
-            <div class="stat-icon green">
-              <i class="fas fa-rupee-sign"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-header">
-            <div>
-              <div class="stat-value">₹{{ today_revenue|floatformat:2 }}</div>
-              <div class="stat-label">Today's Revenue</div>
-            </div>
-            <div class="stat-icon teal">
-              <i class="fas fa-calendar-day"></i>
-            </div>
-          </div>
+    <!-- Low Stock Alerts -->
+    {% if low_stock_items %}
+    <div class="section">
+      <div class="section-header">
+        <h2 class="section-title">
+          <i class="fas fa-exclamation-triangle"></i> Low Stock Alerts
+        </h2>
+        <a href="{% url 'product_list' %}" class="view-all-link">Manage Products →</a>
+      </div>
+      {% for product in low_stock_items %}
+      <div class="alert-item">
+        <div class="alert-product">{{ product.name }}</div>
+        <div class="alert-stock">
+          <i class="fas fa-box"></i> Only {{ product.quantity }} left in stock
         </div>
       </div>
+      {% endfor %}
+    </div>
+    {% endif %}
 
-      <!-- Low Stock Alerts -->
-      {% if low_stock_items %}
-      <div class="section">
-        <div class="section-header">
-          <h2 class="section-title">
-            <i class="fas fa-exclamation-triangle"></i> Low Stock Alerts
-          </h2>
-          <a href="{% url 'product_list' %}" class="view-all-link"
-            >Manage Products →</a
-          >
-        </div>
-        {% for product in low_stock_items %}
-        <div class="alert-item">
-          <div class="alert-product">{{ product.name }}</div>
-          <div class="alert-stock">
-            <i class="fas fa-box"></i> Only {{ product.quantity }} left in stock
-          </div>
-        </div>
-        {% endfor %}
+    <!-- Recent Orders -->
+    <div class="section">
+      <div class="section-header">
+        <h2 class="section-title">
+          <i class="fas fa-shopping-bag"></i> Recent Orders
+        </h2>
+        <a href="{% url 'vendor_orders' %}" class="view-all-link">View All Orders →</a>
+      </div>
+
+      {% if recent_orders %}
+      <table class="orders-table">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Product</th>
+            <th>Customer</th>
+            <th>Quantity</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in recent_orders %}
+          <tr>
+            <td>#{{ item.order.id }}</td>
+            <td>{{ item.product.name }}</td>
+            <td>{{ item.order.customer_name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>₹{{ item.get_total_price|floatformat:2 }}</td>
+            <td>
+              <span
+                class="status-badge {% if item.status == 'Pending' %}pending{% elif item.status == 'Accepted' %}accepted{% elif item.status == 'Packed' %}packed{% elif item.status == 'Out for Delivery' %}delivery{% elif item.status == 'Delivered' %}delivered{% else %}cancelled{% endif %}">
+                {{ item.status }}
+              </span>
+            </td>
+            <td>{{ item.created_at|date:"M d, Y" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="no-data">
+        <i class="fas fa-inbox"></i>
+        <p>No orders yet</p>
       </div>
       {% endif %}
-
-      <!-- Recent Orders -->
-      <div class="section">
-        <div class="section-header">
-          <h2 class="section-title">
-            <i class="fas fa-shopping-bag"></i> Recent Orders
-          </h2>
-          <a href="{% url 'vendor_orders' %}" class="view-all-link"
-            >View All Orders →</a
-          >
-        </div>
-
-        {% if recent_orders %}
-        <table class="orders-table">
-          <thead>
-            <tr>
-              <th>Order ID</th>
-              <th>Product</th>
-              <th>Customer</th>
-              <th>Quantity</th>
-              <th>Amount</th>
-              <th>Status</th>
-              <th>Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for item in recent_orders %}
-            <tr>
-              <td>#{{ item.order.id }}</td>
-              <td>{{ item.product.name }}</td>
-              <td>{{ item.order.customer_name }}</td>
-              <td>{{ item.quantity }}</td>
-              <td>₹{{ item.get_total_price|floatformat:2 }}</td>
-              <td>
-                <span
-                  class="status-badge {% if item.status == 'Pending' %}pending{% elif item.status == 'Accepted' %}accepted{% elif item.status == 'Packed' %}packed{% elif item.status == 'Out for Delivery' %}delivery{% elif item.status == 'Delivered' %}delivered{% else %}cancelled{% endif %}"
-                >
-                  {{ item.status }}
-                </span>
-              </td>
-              <td>{{ item.created_at|date:"M d, Y" }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-        {% else %}
-        <div class="no-data">
-          <i class="fas fa-inbox"></i>
-          <p>No orders yet</p>
-        </div>
-        {% endif %}
-      </div>
     </div>
-  </body>
+  </div>
+</body>
+
 </html>

@@ -11,11 +11,9 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('register/', views.register_view, name='register'),
     path('logout/', views.logout_view, name='logout'),
+    path('set-delivery-pincode/', views.set_delivery_pincode, name='set_delivery_pincode'),
+    path('check-pincode/', views.check_delivery_pincode, name='check_delivery_pincode'),
     path('track-orders/', views.user_orders, name='user_orders'),
-<<<<<<< HEAD
-    path('place-order/<int:product_id>/', views.place_order, name='place_order'),
-    path('category/<int:category_id>/', views.category_products, name='category_products'),
-=======
     path('category/<slug:category_slug>/', views.category_products, name='category_products'),
     
     # Cart & Checkout
@@ -26,5 +24,4 @@ urlpatterns = [
     path('remove-from-cart/<int:item_id>/', views.remove_from_cart, name='remove_from_cart'),
     path('checkout/', views.checkout, name='checkout'),
     path('process-checkout/', views.process_checkout, name='process_checkout'),
->>>>>>> 66b6aa0 (added the checkout page)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,61 +1,59 @@
-import sqlite3
-from datetime import datetime
+import os
 
-# Connect to the database
-conn = sqlite3.connect('db.sqlite3')
-cursor = conn.cursor()
+import django
 
-# Check existing categories
-cursor.execute("SELECT COUNT(*) FROM vendor_category")
-existing_count = cursor.fetchone()[0]
-print(f"Existing categories: {existing_count}")
 
-if existing_count == 0:
-    print("\nCreating categories...")
-    
+def create_categories():
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "finalproject.settings")
+    django.setup()
+
+    from vendor.models import Category
+
     categories = [
-        'Dairy, Bread & Eggs',
-        'Fruits & Vegetables',
-        'Cold Drinks & Juices',
-        'Snacks & Munchies',
-        'Breakfast & Instant Food',
-        'Sweet Tooth',
-        'Bakery & Biscuits',
-        'Tea, Coffee & Milk Drinks',
-        'Atta, Rice & Dal',
-        'Masala, Oil & More',
-        'Sauces & Spreads',
-        'Chicken, Meat & Fish',
-        'Organic & Healthy Living',
-        'Baby Care',
-        'Pharma & Wellness',
-        'Cleaning Essentials',
-        'Home & Office',
-        'Personal Care',
-        'Pet Care',
+        "Dairy, Bread & Eggs",
+        "Fruits & Vegetables",
+        "Cold Drinks & Juices",
+        "Snacks & Munchies",
+        "Breakfast & Instant Food",
+        "Sweet Tooth",
+        "Bakery & Biscuits",
+        "Tea, Coffee & Milk Drinks",
+        "Atta, Rice & Dal",
+        "Masala, Oil & More",
+        "Sauces & Spreads",
+        "Chicken, Meat & Fish",
+        "Organic & Healthy Living",
+        "Baby Care",
+        "Pharma & Wellness",
+        "Cleaning Essentials",
+        "Home & Office",
+        "Personal Care",
+        "Pet Care",
     ]
-    
-    now = datetime.now().isoformat()
-    
-    for cat_name in categories:
-        cursor.execute("""
-            INSERT INTO vendor_category (name, description, is_active, created_at)
-            VALUES (?, ?, ?, ?)
-        """, (cat_name, f'{cat_name} products', 1, now))
-        print(f"  ✓ Created: {cat_name}")
-    
-    conn.commit()
-    print(f"\n✅ Created {len(categories)} categories successfully!")
-else:
-    print("\nCategories already exist:")
-    cursor.execute("SELECT name, is_active FROM vendor_category")
-    for name, is_active in cursor.fetchall():
-        status = "✓" if is_active else "✗"
-        print(f"  {status} {name}")
 
-# Final count
-cursor.execute("SELECT COUNT(*) FROM vendor_category")
-total = cursor.fetchone()[0]
-print(f"\nTotal categories in database: {total}")
+    existing_count = Category.objects.count()
+    print(f"Existing categories: {existing_count}")
+    print("\nCreating categories...")
 
-conn.close()
+    created_count = 0
+    for category_name in categories:
+        _, created = Category.objects.get_or_create(
+            name=category_name,
+            defaults={
+                "description": f"{category_name} products",
+                "is_active": True,
+            },
+        )
+        if created:
+            created_count += 1
+            print(f"  ✓ Created: {category_name}")
+        else:
+            print(f"  - Already exists: {category_name}")
+
+    total = Category.objects.count()
+    print(f"\nCreated in this run: {created_count}")
+    print(f"Total categories in database: {total}")
+
+
+if __name__ == "__main__":
+    create_categories()

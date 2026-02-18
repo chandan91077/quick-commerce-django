@@ -14,7 +14,12 @@
 
 body {
   font-family: "Okra", Arial, sans-serif;
-  background: #f5f5f5;
+  background: linear-gradient(135deg, #e0f7f4 0%, #e3f2fd 100%);
+}
+
+:root {
+  --surface-border: #d7ebe7;
+  --surface-shadow: 0 10px 26px rgba(26, 77, 94, 0.08);
 }
 
 /* =============================================
@@ -24,24 +29,33 @@ body {
 .vendor-header {
   background: linear-gradient(135deg, #1ec0a5 0%, #17a88f 100%);
   color: white;
-  padding: 15px 30px;
+  padding: 15px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 .vendor-logo h1 {
-  font-size: 24px;
+  font-size: 20px;
+  margin: 0;
 }
 
-.vendor-logo span {
-  color: #2196f3;
+.vendor-mobile-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
 }
 
 .vendor-nav {
   display: flex;
-  gap: 25px;
+  gap: 20px;
   align-items: center;
 }
 
@@ -49,11 +63,38 @@ body {
   color: white;
   text-decoration: none;
   font-size: 14px;
-  transition: opacity 0.3s;
+  font-weight: 500;
 }
 
-.vendor-nav a:hover {
-  opacity: 0.8;
+@media (max-width: 992px) {
+  .vendor-mobile-toggle {
+    display: block;
+  }
+
+  .vendor-nav {
+    position: fixed;
+    top: 55px;
+    left: 0;
+    width: 100%;
+    background: #17a88f;
+    flex-direction: column;
+    padding: 20px;
+    gap: 15px;
+    transform: translateY(-150%);
+    transition: transform 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .vendor-nav.active {
+    transform: translateY(0);
+  }
+
+  .vendor-nav-links {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 15px;
+  }
 }
 
 .vendor-nav .shop-name {
@@ -83,21 +124,24 @@ body {
   background: white;
   border-radius: 10px;
   padding: 40px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--surface-border);
+  box-shadow: var(--surface-shadow);
 }
 
 .profile-container {
   background: white;
   border-radius: 10px;
   padding: 40px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--surface-border);
+  box-shadow: var(--surface-shadow);
 }
 
 .order-detail {
   background: white;
   border-radius: 10px;
   padding: 30px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--surface-border);
+  box-shadow: var(--surface-shadow);
 }
 
 /* =============================================
@@ -132,7 +176,8 @@ body {
   background: white;
   border-radius: 10px;
   padding: 25px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--surface-border);
+  box-shadow: var(--surface-shadow);
   transition: transform 0.3s;
 }
 
@@ -203,7 +248,8 @@ body {
   background: white;
   border-radius: 10px;
   padding: 25px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--surface-border);
+  box-shadow: var(--surface-shadow);
   margin-bottom: 30px;
 }
 
@@ -287,7 +333,8 @@ td {
   background: white;
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--surface-border);
+  box-shadow: var(--surface-shadow);
 }
 
 .orders-table-wrapper table {
@@ -668,7 +715,8 @@ textarea.form-control {
   background: white;
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--surface-border);
+  box-shadow: var(--surface-shadow);
   transition: transform 0.3s;
 }
 
@@ -891,6 +939,7 @@ textarea.form-control {
 }
 
 @keyframes pulse {
+
   0%,
   100% {
     transform: scale(1);

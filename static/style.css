@@ -6,6 +6,8 @@
 	--accent: #1ec0a5;
 	--accent-strong: #17a88f;
 	--line: #d0e8e4;
+	--surface-border: #d7ebe7;
+	--surface-shadow: 0 10px 26px rgba(26, 77, 94, 0.08);
 	--panel: #1a4d5e;
 	--panel-ink: #ffffff;
 	--shadow: 0 30px 80px rgba(26, 77, 94, 0.16);
@@ -19,7 +21,7 @@ body {
 	margin: 0;
 	font-family: "Poppins", "Segoe UI", Tahoma, sans-serif;
 	color: var(--ink);
-	background: linear-gradient(135deg, #1ec0a5 0%, #2196f3 100%);
+	background: linear-gradient(135deg, #e0f7f4 0%, #e3f2fd 100%);
 }
 
 .auth-page {
@@ -27,7 +29,7 @@ body {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	padding: 40px 20px;
+	padding: 20px;
 }
 
 .auth-shell {
@@ -39,6 +41,12 @@ body {
 	grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
 	box-shadow: var(--shadow);
 	border: 1px solid var(--line);
+}
+
+.card {
+	background: #fff;
+	border: 1px solid var(--surface-border);
+	box-shadow: var(--surface-shadow);
 }
 
 .auth-card {
