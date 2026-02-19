@@ -7,7 +7,7 @@ This module handles user-related views including:
 - Order management
 """
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -231,6 +231,25 @@ def category_products(request, category_slug):
         print(f"Error loading category products: {error}")
         messages.error(request, 'Error loading products')
         return redirect('home')
+
+
+def product_detail(request, product_slug):
+    """
+    Display a single product detail page using product slug.
+    """
+    from vendor.models import Product
+
+    product = get_object_or_404(
+        Product.objects.select_related('category', 'vendor'),
+        slug=product_slug,
+        is_active=True,
+        vendor__status='approved'
+    )
+
+    context = {
+        'product': product,
+    }
+    return render(request, 'product_detail.html', context)
 
 
 def set_delivery_pincode(request):

@@ -15,6 +15,7 @@ urlpatterns = [
     path('check-pincode/', views.check_delivery_pincode, name='check_delivery_pincode'),
     path('track-orders/', views.user_orders, name='user_orders'),
     path('category/<slug:category_slug>/', views.category_products, name='category_products'),
+    path('product/<slug:product_slug>/', views.product_detail, name='product_detail'),
     
     # Cart & Checkout
     path('cart/', views.view_cart, name='view_cart'),

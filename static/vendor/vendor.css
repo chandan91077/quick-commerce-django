@@ -992,12 +992,21 @@ textarea.form-control {
    LOGIN/SIGNUP CONTAINERS
    ============================================= */
 
+.vendor-auth-page {
+  min-height: 100vh;
+  padding: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
 .login-container {
   background: white;
   border-radius: 12px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   max-width: 450px;
   width: 100%;
+  margin: 36px auto;
   overflow: hidden;
 }
 
@@ -1033,7 +1042,25 @@ textarea.form-control {
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   max-width: 900px;
   width: 100%;
+  margin: 36px auto;
   overflow: hidden;
+}
+
+@media (max-width: 992px) {
+  .vendor-auth-page {
+    padding: 12px;
+  }
+
+  .login-container,
+  .signup-container {
+    width: calc(100% - 24px);
+    margin: 16px auto;
+  }
+
+  .login-form,
+  .signup-form {
+    padding: 24px;
+  }
 }
 
 .signup-header {

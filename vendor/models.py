@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinValueValidator
 from django.utils import timezone
 from django.utils.text import slugify
 from django.urls import reverse
@@ -36,17 +36,6 @@ class Vendor(models.Model):
     pincode = models.CharField(
         max_length=200,
         help_text='Enter one or more 6-digit pincodes (comma separated)'
-    )
-    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
-    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
-    
-    # Delivery Settings
-    delivery_radius = models.DecimalField(
-        max_digits=5, 
-        decimal_places=2, 
-        default=5.0,
-        validators=[MinValueValidator(0.5), MaxValueValidator(50.0)],
-        help_text="Delivery radius in kilometers"
     )
     
     # Shop Branding
@@ -224,7 +213,10 @@ class Order(models.Model):
         ('upi', 'UPI'),
         ('card', 'Card'),
     ]
-    
+    # id = models.AutoField(primary_key=True)
+    # So internally your model becomes:
+    # id = Auto Increment Integer
+
     # Relationships
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
     

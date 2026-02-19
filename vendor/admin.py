@@ -11,7 +11,7 @@ class VendorAdmin(admin.ModelAdmin):
     # Admin for Vendor model
     list_display = [
         'shop_name', 'owner_name', 'email', 'phone', 'city', 
-        'status_badge', 'delivery_radius', 'total_products', 'created_at'
+        'status_badge', 'total_products', 'created_at'
     ]
     list_filter = ['status', 'city', 'state', 'created_at']
     search_fields = ['shop_name', 'owner_name', 'email', 'phone', 'city']
@@ -25,7 +25,7 @@ class VendorAdmin(admin.ModelAdmin):
             'fields': ('shop_name', 'owner_name', 'email', 'phone')
         }),
         ('Location Details', {
-            'fields': ('address', 'city', 'state', 'pincode', 'latitude', 'longitude', 'delivery_radius')
+            'fields': ('address', 'city', 'state', 'pincode')
         }),
         ('Branding', {
             'fields': ('shop_logo', 'shop_banner'),

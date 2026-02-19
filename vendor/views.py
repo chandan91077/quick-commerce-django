@@ -14,7 +14,7 @@ from decimal import Decimal
 import csv
 import json  # might use later
 
-from .models import Vendor, Product, Category, OrderItem, calculate_distance
+from .models import Vendor, Product, Category, OrderItem
 from .forms import (
     VendorSignupForm,
     VendorLoginForm,
@@ -121,8 +121,11 @@ def login_vendor(request):
         - approved: Redirect to dashboard
         - rejected/blocked: Logout and show error
     """
-    if request.user.is_authenticated and hasattr(request.user, 'vendor_profile'):
-        return redirect('vendor_dashboard')
+    if request.user.is_authenticated:
+        if hasattr(request.user, 'vendor_profile'):
+            return redirect('vendor_dashboard')
+        messages.info(request, 'You are already logged in as a customer. Please logout first to login as vendor.')
+        return redirect('home')
     
     if request.method == 'POST':
         form = VendorLoginForm(request.POST)
@@ -741,45 +744,3 @@ Thank you for shopping with Blinkit!
         print(f"Error sending order status email: {error}")
 
 
-def get_products_in_delivery_range(user_latitude, user_longitude):
-    """
-    Get products from vendors within delivery range of user location.
-    
-    Uses Haversine formula to calculate distance between
-    user location and vendor locations.
-    
-    Args:
-        user_latitude: Customer's latitude coordinate
-        user_longitude: Customer's longitude coordinate
-    
-    Returns:
-        QuerySet of available products from vendors in range
-    """
-    if not user_latitude or not user_longitude:
-        return Product.objects.filter(
-            is_available=True,
-            is_active=True,
-            vendor__status='approved'
-        )
-    
-    available_products = []
-    vendors = Vendor.objects.filter(status='approved')
-    
-    for vendor in vendors:
-        if vendor.latitude and vendor.longitude:
-            distance = calculate_distance(
-                user_latitude,
-                user_longitude,
-                vendor.latitude,
-                vendor.longitude
-            )
-            
-            # Include products if within delivery range
-            if distance and distance <= float(vendor.delivery_radius):
-                vendor_products = vendor.products.filter(
-                    is_available=True,
-                    is_active=True
-                )
-                available_products.extend(vendor_products)
-    
-    return available_products

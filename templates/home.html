@@ -29,6 +29,7 @@ Home{% endblock %} {% block extra_css %}
     text-align: center;
     background: white;
     transition: box-shadow 0.2s;
+    cursor: pointer;
   }
 
   .product-card:hover {
@@ -160,32 +161,60 @@ Home{% endblock %} {% block extra_css %}
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
 </style>
-{% endblock %}
-{% block content %}
+{% endblock %} {% block content %}
 <div class="container">
-  {% if delivery_checked and not delivery_available %}
+  {% if messages %}
+  <div class="mt-3">
+    {% for message in messages %}
+    <div
+      class="alert alert-{{ message.tags }} alert-dismissible fade show"
+      role="alert"
+    >
+      {{ message }}
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
+      ></button>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %} {% if delivery_checked and not delivery_available %}
   <div class="delivery-warning-banner">
     <div class="warning-icon">
       <i class="fas fa-exclamation-triangle"></i>
     </div>
     <div class="warning-content">
       <h3>We're not available at your location yet</h3>
-      <p>We don't deliver to <strong>{{ delivery_pincode }}</strong> right now. We're expanding fast, check back soon!
+      <p>
+        We don't deliver to <strong>{{ delivery_pincode }}</strong> right now.
+        We're expanding fast, check back soon!
       </p>
     </div>
-    <button class="change-pin-btn" onclick="document.getElementById('header_delivery_pincode').focus();">
+    <button
+      class="change-pin-btn"
+      onclick="document.getElementById('header_delivery_pincode').focus()"
+    >
       Change Pincode
     </button>
   </div>
   {% endif %}
-  <div class="banner" style="background-image: url('{% static 'images/Frame-1437256605-2-2.jpg' %}');">
+  <div
+    class="banner"
+    style="
+      background-image: url({% static 'images/Frame-1437256605-2-2.jpg' %});
+    "
+  >
     <div class="banner-text">
       <h1>Stock up on daily essentials</h1>
       <p>
         Get farm-fresh goodness & a range of exotic <br />
         fruits, vegetables, eggs & more
       </p>
-      <a href="#shop-categories"><button style="cursor: pointer">Shop Now</button></a>
+      <a href="#shop-categories"
+        ><button style="cursor: pointer">Shop Now</button></a
+      >
     </div>
   </div>
 
@@ -195,7 +224,9 @@ Home{% endblock %} {% block extra_css %}
         <h3>Pharmacy at your doorstep!</h3>
         <p>Cough syrups, pain relief sprays & more</p>
         {% if special_cats.pharma %}
-        <a href="{% url 'category_products' special_cats.pharma.slug %}"><button>Order Now</button></a>
+        <a href="{% url 'category_products' special_cats.pharma.slug %}"
+          ><button>Order Now</button></a
+        >
         {% else %}
         <button>Order Now</button>
         {% endif %}
@@ -208,7 +239,9 @@ Home{% endblock %} {% block extra_css %}
         <h3>Pet care supplies at your door</h3>
         <p>Food, treats, toys & more</p>
         {% if special_cats.pet %}
-        <a href="{% url 'category_products' special_cats.pet.slug %}"><button>Order Now</button></a>
+        <a href="{% url 'category_products' special_cats.pet.slug %}"
+          ><button>Order Now</button></a
+        >
         {% else %}
         <button>Order Now</button>
         {% endif %}
@@ -221,7 +254,9 @@ Home{% endblock %} {% block extra_css %}
         <h3>No time for a diaper run?</h3>
         <p>Get baby care essentials</p>
         {% if special_cats.baby %}
-        <a href="{% url 'category_products' special_cats.baby.slug %}"><button>Order Now</button></a>
+        <a href="{% url 'category_products' special_cats.baby.slug %}"
+          ><button>Order Now</button></a
+        >
         {% else %}
         <button>Order Now</button>
         {% endif %}
@@ -235,8 +270,11 @@ Home{% endblock %} {% block extra_css %}
   </h2>
   <div class="categories">
     {% for category in categories %}
-    <a href="{% url 'category_products' category.slug %}" class="cat-link"
-      style="text-decoration: none; color: inherit">
+    <a
+      href="{% url 'category_products' category.slug %}"
+      class="cat-link"
+      style="text-decoration: none; color: inherit"
+    >
       <div class="cat">
         <img src="{% static category.image_url %}" alt="{{ category.name }}" />
         <p>{{ category.name }}</p>
@@ -245,15 +283,23 @@ Home{% endblock %} {% block extra_css %}
     {% endfor %}
   </div>
 
-  <div class="product-section" style="margin-top: 40px; margin-bottom: 40px" id="products-section">
+  <div
+    class="product-section"
+    style="margin-top: 40px; margin-bottom: 40px"
+    id="products-section"
+  >
     <h2 style="margin-bottom: 20px">Fresh Products</h2>
     <div class="product-grid">
       {% for product in products %}
-      <div class="product-card">
+      <div
+        class="product-card"
+        onclick="window.location.href='{% url 'product_detail' product.slug %}'"
+      >
         {% if product.image %}
         <img src="{{ product.image.url }}" alt="{{ product.name }}" />
         {% else %}
-        <div style="
+        <div
+          style="
             height: 150px;
             background: #f0f0f0;
             display: flex;
@@ -261,7 +307,8 @@ Home{% endblock %} {% block extra_css %}
             justify-content: center;
             border-radius: 4px;
             color: #999;
-          ">
+          "
+        >
           No Image
         </div>
         {% endif %}
@@ -269,9 +316,19 @@ Home{% endblock %} {% block extra_css %}
         <p style="margin-bottom: 5px">{{ product.category.name }}</p>
         <div class="price">₹{{ product.price }}</div>
         {% if product.quantity > 0 %}
-        <a href="{% url 'add_to_cart' product.slug %}" class="btn-buy">Add</a>
+        <a
+          href="{% url 'add_to_cart' product.slug %}"
+          class="btn-buy"
+          onclick="event.stopPropagation()"
+          >Add</a
+        >
         {% else %}
-        <button class="btn-buy" disabled style="background: #ccc; cursor: not-allowed">
+        <button
+          class="btn-buy"
+          onclick="event.stopPropagation()"
+          disabled
+          style="background: #ccc; cursor: not-allowed"
+        >
           Out of Stock
         </button>
         {% endif %}

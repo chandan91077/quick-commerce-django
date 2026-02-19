@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.files.images import get_image_dimensions
 from .models import Vendor, Product, Category, OrderItem
+from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 import re  # unused atm but might need for validation later
 
 # VENDOR SIGNUP FORM
@@ -34,7 +35,6 @@ class VendorSignupForm(forms.ModelForm):
         fields = [
             'shop_name', 'owner_name', 'email', 'phone',
             'address', 'city', 'state', 'pincode',
-            'latitude', 'longitude', 'delivery_radius',
             'shop_logo', 'shop_banner'
         ]
         widgets = {
@@ -46,9 +46,6 @@ class VendorSignupForm(forms.ModelForm):
             'city': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'City'}),
             'state': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'State'}),
             'pincode': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. 560001, 560034'}),
-            'latitude': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '28.7041', 'step': '0.000001'}),
-            'longitude': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '77.1025', 'step': '0.000001'}),
-            'delivery_radius': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '5.0', 'step': '0.5'}),
             'shop_logo': forms.FileInput(attrs={'class': 'form-control'}),
             'shop_banner': forms.FileInput(attrs={'class': 'form-control'}),
         }
@@ -124,7 +121,6 @@ class VendorProfileForm(forms.ModelForm):
         fields = [
             'shop_name', 'owner_name', 'email', 'phone',
             'address', 'city', 'state', 'pincode',
-            'latitude', 'longitude', 'delivery_radius',
             'shop_logo', 'shop_banner'
         ]
         widgets = {
@@ -136,9 +132,6 @@ class VendorProfileForm(forms.ModelForm):
             'city': forms.TextInput(attrs={'class': 'form-control'}),
             'state': forms.TextInput(attrs={'class': 'form-control'}),
             'pincode': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. 560001, 560034'}),
-            'latitude': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.000001'}),
-            'longitude': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.000001'}),
-            'delivery_radius': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.5'}),
             'shop_logo': forms.FileInput(attrs={'class': 'form-control'}),
             'shop_banner': forms.FileInput(attrs={'class': 'form-control'}),
         }
@@ -198,6 +191,17 @@ class ProductForm(forms.ModelForm):
     
     def clean(self):
         cleaned_data = super().clean()
+
+        # Preserve exact typed currency values (avoid implicit float-style drift)
+        for field_name in ['price', 'discount_price']:
+            raw_value = (self.data.get(field_name) or '').strip()
+            if not raw_value:
+                continue
+            try:
+                cleaned_data[field_name] = Decimal(raw_value).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+            except (InvalidOperation, ValueError):
+                self.add_error(field_name, 'Enter a valid price value.')
+
         price = cleaned_data.get('price')
         discount_price = cleaned_data.get('discount_price')
         
