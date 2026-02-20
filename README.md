@@ -145,6 +145,71 @@ Open: `http://127.0.0.1:8000/`
 
 ---
 
+## Docker Setup (Alternative)
+
+### Quick Start with Docker Compose
+
+1. **Clone the repository**
+
+   ```bash
+   git clone <your-repo-url>
+   cd quick-commerce-django
+   ```
+
+2. **Configure environment variables**
+
+   Copy the Docker environment template:
+
+   ```bash
+   cp .env.docker .env
+   ```
+
+   Update `.env` with your actual values (especially `SECRET_KEY`, email credentials).
+
+3. **Build and run containers**
+
+   ```bash
+   docker-compose up --build
+   ```
+
+4. **Access the application**
+   - Django app: `http://localhost:8000`
+   - MySQL: `localhost:3306`
+
+5. **Run management commands**
+
+   ```bash
+   # Create superuser
+   docker-compose exec web python manage.py createsuperuser
+
+   # Seed categories
+   docker-compose exec web python create_categories.py
+
+   # Run migrations
+   docker-compose exec web python manage.py migrate
+   ```
+
+6. **Stop containers**
+   ```bash
+   docker-compose down
+   ```
+
+### Build Docker Image Only
+
+To build just the Django app image:
+
+```bash
+docker build -t quickcommerce-django .
+```
+
+To run the image (requires external MySQL):
+
+```bash
+docker run -p 8000:8000 --env-file .env quickcommerce-django
+```
+
+---
+
 ## Useful Commands
 
 ```bash
