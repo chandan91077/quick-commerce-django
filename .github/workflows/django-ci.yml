@@ -2,7 +2,7 @@ name: Django CI
 
 on:
   push:
-    
+
   pull_request:
 
 jobs:
@@ -24,11 +24,15 @@ jobs:
           --health-retries=10
 
     env:
+      SECRET_KEY: django-insecure-ci-test-key-only-for-github-actions
       DB_NAME: Finalprojects
       DB_USER: root
       DB_PASSWORD: rootpass
       DB_HOST: 127.0.0.1
       DB_PORT: 3306
+      EMAIL_HOST_USER: test@example.com
+      EMAIL_HOST_PASSWORD: test-password
+      DEFAULT_FROM_EMAIL: Test <test@example.com>
 
     steps:
       - name: Checkout code
