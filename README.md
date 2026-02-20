@@ -230,6 +230,61 @@ docker run -p 8000:8000 --env-file .env quickcommerce-django
 
 ---
 
+## Cloudflare Tunnel Setup
+
+Use this to expose your local/Docker app securely on your domain.
+
+1. **Start your app locally**
+   - Local Django: `http://127.0.0.1:8000`
+   - Docker Django: `http://localhost:8000`
+
+2. **Login to Cloudflare (one-time)**
+
+   ```bash
+   cloudflared tunnel login
+   ```
+
+3. **Create a named tunnel (one-time)**
+
+   ```bash
+   cloudflared tunnel create blinkit
+   ```
+
+4. **Create config file**
+
+   Create `%USERPROFILE%\\.cloudflared\\config.yml` with:
+
+   ```yml
+   tunnel: <TUNNEL_ID>
+   credentials-file: C:\\Users\\<YOUR_USER>\\.cloudflared\\<TUNNEL_ID>.json
+
+   ingress:
+     - hostname: djangoprojects.prabhatanvik.shop
+       service: http://localhost:8000
+     - service: http_status:404
+   ```
+
+5. **Map DNS to tunnel (one-time)**
+
+   ```bash
+   cloudflared tunnel route dns blinkit djangoprojects.prabhatanvik.shop
+   ```
+
+6. **Run tunnel**
+
+   ```bash
+   cloudflared tunnel run blinkit
+   ```
+
+7. **Check Django host config**
+
+   Ensure `ALLOWED_HOSTS` includes:
+   - `djangoprojects.prabhatanvik.shop`
+   - `localhost`
+   - `127.0.0.1`
+
+---
+
 ## Useful Commands
 
 ```bash
