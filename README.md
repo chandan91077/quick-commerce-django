@@ -102,11 +102,17 @@ pip install -r requirements.txt
 Create `.env` in project root (`quick-commerce-django/.env`):
 
 ```env
+SECRET_KEY=your_django_secret_key
+
 DB_NAME=Finalprojects
 DB_USER=root
 DB_PASSWORD=your_mysql_password
 DB_HOST=127.0.0.1
 DB_PORT=3306
+
+EMAIL_HOST_USER=your_email@example.com
+EMAIL_HOST_PASSWORD=your_email_app_password
+DEFAULT_FROM_EMAIL=Blinkit <your_email@example.com>
 ```
 
 > The project reads these values in `finalproject/settings.py`.
