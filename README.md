@@ -172,11 +172,29 @@ Open: `http://127.0.0.1:8000/`
    docker-compose up --build
    ```
 
+   The entrypoint script automatically:
+   - Waits for MySQL to be ready
+   - Runs database migrations
+   - Collects static files
+   - Optionally creates a superuser (if env vars set)
+   - Optionally seeds categories (if `SEED_CATEGORIES=true`)
+
 4. **Access the application**
    - Django app: `http://localhost:8000`
-   - MySQL: `localhost:3306`
+   - MySQL: `localhost:3307` (from host machine)
 
-5. **Run management commands**
+5. **Optional: Auto-create superuser**
+
+   Edit `.env` or uncomment in `docker-compose.yml`:
+
+   ```env
+   DJANGO_SUPERUSER_USERNAME=admin
+   DJANGO_SUPERUSER_EMAIL=admin@example.com
+   DJANGO_SUPERUSER_PASSWORD=admin123
+   SEED_CATEGORIES=true
+   ```
+
+6. **Run management commands**
 
    ```bash
    # Create superuser
@@ -189,7 +207,7 @@ Open: `http://127.0.0.1:8000/`
    docker-compose exec web python manage.py migrate
    ```
 
-6. **Stop containers**
+7. **Stop containers**
    ```bash
    docker-compose down
    ```
@@ -200,6 +218,8 @@ To build just the Django app image:
 
 ```bash
 docker build -t quickcommerce-django .
+docker compose down
+docker compose up --build
 ```
 
 To run the image (requires external MySQL):

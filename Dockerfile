@@ -1,5 +1,5 @@
 # Build stage for production-ready Django app
-FROM python:3.11-slim as base
+FROM python:3.11-slim AS base
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
     default-libmysqlclient-dev \
     pkg-config \
     gcc \
+    netcat-openbsd \
     && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
@@ -25,6 +26,10 @@ RUN pip install --upgrade pip && \
 # Copy project files
 COPY . .
 
+# Copy and set permissions for entrypoint script
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 # Collect static files (for production)
 RUN python manage.py collectstatic --noinput --clear || true
 
@@ -36,6 +41,5 @@ RUN useradd -m -u 1000 django && \
     chown -R django:django /app
 USER django
 
-# Run migrations and start server
-CMD python manage.py migrate --noinput && \
-    python manage.py runserver 0.0.0.0:8000
+# Use entrypoint script
+ENTRYPOINT ["docker-entrypoint.sh"]

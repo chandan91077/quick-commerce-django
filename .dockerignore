@@ -29,11 +29,10 @@ Thumbs.db
 # Django
 db.sqlite3
 *.log
-media/
+
 staticfiles/
 
 # Docker
-Dockerfile
 docker-compose.yml
 .dockerignore
 
