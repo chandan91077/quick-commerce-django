@@ -31,6 +31,7 @@ This project includes:
 - Category-wise product listing
 - Product details page via slug URL (`/product/<slug>/`)
 - User registration/login/logout
+- Forgot password via SMTP email reset flow
 - Cart management and checkout
 - Order tracking page
 - Delivery pincode save/check endpoint
@@ -142,6 +143,43 @@ python manage.py runserver
 ```
 
 Open: `http://127.0.0.1:8000/`
+
+---
+
+## Forgot Password (SMTP)
+
+This project uses Django's built-in auth password reset views with SMTP email delivery.
+
+### Required `.env` values
+
+```env
+EMAIL_HOST_USER=your_email@example.com
+EMAIL_HOST_PASSWORD=your_email_app_password
+DEFAULT_FROM_EMAIL=Blinkit <your_email@example.com>
+```
+
+> For Gmail, use an **App Password** (not your normal account password).
+
+### Password reset routes
+
+- `GET/POST /forgot-password/` -> request reset link
+- `GET /password-reset/done/` -> confirmation that email was sent
+- `GET/POST /reset/<uidb64>/<token>/` -> set a new password
+- `GET /reset/done/` -> password reset success page
+
+### Templates used
+
+- `templates/registration/password_reset_form.html`
+- `templates/registration/password_reset_done.html`
+- `templates/registration/password_reset_confirm.html`
+- `templates/registration/password_reset_complete.html`
+- `templates/registration/password_reset_email.html`
+- `templates/registration/password_reset_subject.txt`
+
+### Notes
+
+- Reset email is sent only when a matching user email exists.
+- `uidb64` and `token` are generated and validated by Django automatically.
 
 ---
 
